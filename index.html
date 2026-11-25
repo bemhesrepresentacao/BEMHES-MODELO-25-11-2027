@@ -1,3 +1,8 @@
+
+
+
+Ícone do app HTML
+index
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -284,7 +289,7 @@
             <!-- CONTAINER DA TABELA RESPONSIVA -->
             <div class="overflow-x-auto custom-scrollbar min-h-[340px] relative">
                 <!-- Loader Overlay -->
-                <div id="loading-overlay" class="hidden absolute inset-0 bg-white/85 backdrop-blur-xs z-20 flex flex-col items-center justify-center p-6 text-center">
+                <div id="loading-overlay" class="hidden absolute inset-0 bg-white/85 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-6 text-center">
                     <div class="w-12 h-12 rounded-2xl bg-trator text-white flex items-center justify-center shadow-lg mb-3 animate-bounce">
                         <i data-lucide="refresh-cw" class="w-6 h-6 animate-spin"></i>
                     </div>
@@ -378,7 +383,7 @@
     <!-- ===================================================================== -->
     <!-- MODAL 1: FICHA 360° DO CLIENTE (CORRELAÇÃO ENTRE TODAS AS ABAS)       -->
     <!-- ===================================================================== -->
-    <div id="modal-ficha-cliente" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/80 backdrop-blur-xs p-3 sm:p-6 overflow-y-auto">
+    <div id="modal-ficha-cliente" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/80 backdrop-blur-sm p-3 sm:p-6 overflow-y-auto">
         <div class="bg-creme border-2 border-aco rounded-2xl max-w-5xl w-full shadow-2xl overflow-hidden animate-modal my-auto max-h-[92vh] flex flex-col">
             
             <!-- Cabeçalho da Ficha 360° -->
@@ -435,7 +440,7 @@
     <!-- ===================================================================== -->
     <!-- MODAL 2: ADICIONAR / EDITAR REGISTRO (CRUD)                           -->
     <!-- ===================================================================== -->
-    <div id="modal-registro" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/80 backdrop-blur-xs p-4 overflow-y-auto">
+    <div id="modal-registro" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/80 backdrop-blur-sm p-4 overflow-y-auto">
         <div class="bg-creme border-2 border-aco rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden animate-modal my-auto">
             
             <!-- Cabeçalho -->
@@ -456,7 +461,7 @@
 
             <!-- Formulário Dinâmico -->
             <form id="form-registro" onsubmit="salvarRegistro(event)" class="p-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
-                <!-- Seletor rápido de correlação de Cliente (quando não estiver na aba principal de Clientes) -->
+                <!-- Seletor rápido de correlação de Cliente -->
                 <div id="box-correlacao-cliente" class="hidden mb-5 p-3.5 rounded-xl bg-petroleo/10 border border-petroleo/30">
                     <label class="block text-xs font-bold uppercase text-petroleo mb-1.5 flex items-center gap-1.5">
                         <i data-lucide="link-2" class="w-4 h-4 text-trator"></i>
@@ -485,9 +490,9 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- MODAL 3: CONFIRMAÇÃO DE EXCLUSÃO (SEM USO DE CONFIRM NATIVO)          -->
+    <!-- MODAL 3: CONFIRMAÇÃO DE EXCLUSÃO                                      -->
     <!-- ===================================================================== -->
-    <div id="modal-excluir" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/80 backdrop-blur-xs p-4">
+    <div id="modal-excluir" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/80 backdrop-blur-sm p-4">
         <div class="bg-creme border-2 border-aco rounded-2xl max-w-md w-full p-6 shadow-2xl animate-modal">
             <div class="flex items-center gap-3 text-trator mb-3">
                 <div class="w-11 h-11 rounded-xl bg-trator/15 flex items-center justify-center flex-shrink-0">
@@ -516,7 +521,7 @@
     <!-- ===================================================================== -->
     <!-- MODAL 4: CONFIGURAÇÃO DA PLANILHA GOOGLE E APPS SCRIPT WEBHOOK        -->
     <!-- ===================================================================== -->
-    <div id="modal-config" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/80 backdrop-blur-xs p-4 overflow-y-auto">
+    <div id="modal-config" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/80 backdrop-blur-sm p-4 overflow-y-auto">
         <div class="bg-creme border-2 border-aco rounded-2xl max-w-2xl w-full p-6 shadow-2xl animate-modal my-auto">
             
             <div class="flex items-center justify-between border-b border-aco/15 pb-4 mb-5">
@@ -570,540 +575,425 @@
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-xs font-bold uppercase text-ambar flex items-center gap-1.5">
                             <i data-lucide="code-2" class="w-4 h-4"></i>
-                            <span>Código Google Apps Script (Cole em Extensões > Apps Script na sua Planilha)</span>
+                            Código Google Apps Script (Cole em Extensões &gt; Apps Script)
                         </span>
                         <button type="button" onclick="copiarCodigoAppsScript()" class="px-2.5 py-1 rounded bg-trator hover:bg-tratorHover text-white text-[11px] font-bold flex items-center gap-1">
                             <i data-lucide="copy" class="w-3 h-3"></i>
                             <span>Copiar Código</span>
                         </button>
                     </div>
-                    <textarea id="codigo-apps-script" readonly rows="6" class="w-full bg-black/50 text-creme/90 font-mono text-[11px] p-2.5 rounded-lg border border-white/10 focus:outline-none">function doPost(e) {
-  var data = JSON.parse(e.postData.contents);
+                    <pre id="codigo-apps-script" class="text-[11px] font-mono text-creme/85 overflow-x-auto custom-scrollbar max-h-36 leading-relaxed">function doPost(e) {
+  var req = JSON.parse(e.postData.contents);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(data.aba) || ss.insertSheet(data.aba);
-  if (data.acao === 'adicionar') {
-    if (sheet.getLastRow() === 0) sheet.appendRow(data.colunas);
-    sheet.appendRow(data.colunas.map(function(c){ return data.registro[c] || ''; }));
-  } else if (data.acao === 'editar' && data.rowIndex >= 0) {
-    var rowNum = data.rowIndex + 2;
-    data.colunas.forEach(function(c, idx){ sheet.getRange(rowNum, idx + 1).setValue(data.registro[c] || ''); });
-  } else if (data.acao === 'excluir' && data.rowIndex >= 0) {
-    sheet.deleteRow(data.rowIndex + 2);
+  var sheet = ss.getSheetByName(req.aba);
+  if (!sheet) return ContentService.createTextOutput(JSON.stringify({ok:false, erro:'Aba não encontrada'})).setMimeType(ContentService.MimeType.JSON);
+  
+  if (req.acao === 'adicionar') {
+    sheet.appendRow(req.valores);
+  } else if (req.acao === 'editar') {
+    var rowIdx = parseInt(req.rowIndex) + 2;
+    sheet.getRange(rowIdx, 1, 1, req.valores.length).setValues([req.valores]);
+  } else if (req.acao === 'excluir') {
+    var delIdx = parseInt(req.rowIndex) + 2;
+    sheet.deleteRow(delIdx);
   }
-  return ContentService.createTextOutput(JSON.stringify({status: 'ok'})).setMimeType(ContentService.MimeType.JSON);
-}</textarea>
+  return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
+}</pre>
                 </div>
 
                 <div class="pt-3 border-t border-aco/15 flex items-center justify-end gap-3">
                     <button type="button" onclick="fecharModalConfig()" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-aco/75 hover:bg-aco/10">
-                        Fechar
+                        Cancelar
                     </button>
                     <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-petroleo hover:bg-petroleoHover text-white shadow-md flex items-center gap-2">
                         <i data-lucide="check" class="w-4 h-4"></i>
-                        <span>Salvar e Sincronizar</span>
+                        <span>Salvar Configurações</span>
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- TOAST DE NOTIFICAÇÕES (FEEDBACK VISUAL NÃO BLOQUEANTE)                -->
-    <!-- ===================================================================== -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+    <!-- CONTAINER DE NOTIFICAÇÕES (TOASTS) -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
 
     <!-- ===================================================================== -->
-    <!-- SCRIPTS DE INTEGRAÇÃO GOOGLE SHEETS, CORRELAÇÃO E CRUD                -->
+    <!-- SCRIPTS DE INTEGRAÇÃO, CORRELAÇÃO E GESTÃO CRUD                       -->
     <!-- ===================================================================== -->
     <script>
-        // URL oficial da Planilha Google fornecida pelo usuário
-        const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRQDQFjFemHWo5bPZZs-QkhJ8IablJaAiMq-BrwQp7ePWVOWGjtRObOmqjIBpvelic0qaiKNAWcaurb/pubhtml";
-        const STORAGE_DATA_KEY = "bemhes_2027_sheets_data_v1";
-        const STORAGE_CONFIG_KEY = "bemhes_2027_sheets_config_v1";
+        // =========================================================================
+        // 1. CONSTANTES E ESTADO GLOBAL
+        // =========================================================================
+        const DEFAULT_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRQDQFjFemHWo5bPZZs-QkhJ8IablJaAiMq-BrwQp7ePWVOWGjtRObOmqjIBpvelic0qaiKNAWcaurb/pubhtml';
+        const STORAGE_DATA_KEY = 'bemhes_2027_sheets_data_v1';
+        const STORAGE_CFG_KEY  = 'bemhes_2027_sheets_cfg_v1';
 
-        // Estado Global da Aplicação
         let state = {
             sheetUrl: DEFAULT_SHEET_URL,
-            webhookUrl: "",
-            abas: [],            // Lista de nomes das abas: ["Clientes", "Cotações", ...]
-            abaAtiva: "",        // Nome da aba selecionada atualmente
-            dados: {},           // { "NomeAba": { colunas: [...], linhas: [ { ... }, ... ] } }
-            termoBusca: "",
-            fonteDados: "carregando", // "google-live" | "cache-local" | "estrutura-inicial"
-            ultimaSync: null,
-            editandoIndex: null, // null = novo, number = índice da linha editada
-            excluindoIndex: null
+            webhookUrl: '',
+            abas: [],          // [{ id, nome, colunas: [], linhas: [ { _id, ...campos } ] }]
+            abaAtivaIndex: 0,
+            termoBusca: '',
+            editandoInfo: null, // { abaIndex, rowIndex } ou null se novo
+            excluindoInfo: null // { abaIndex, rowIndex }
         };
 
         // =========================================================================
-        // 1. INICIALIZAÇÃO
+        // 2. INICIALIZAÇÃO DA PÁGINA
         // =========================================================================
-        window.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
-
-            // Atualiza data e ano no cabeçalho e rodapé
-            document.getElementById('ano-atual').textContent = new Date().getFullYear();
-            const opcoesData = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const dataFormatada = new Date().toLocaleDateString('pt-BR', opcoesData);
-            document.getElementById('data-atual').textContent = dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
-
-            // Carrega configurações salvas
+            atualizarDataRodape();
             carregarConfiguracoes();
 
-            // Tenta carregar do cache local primeiro para resposta instantânea, e em seguida sincroniza com Google Sheets
-            const temCache = carregarCacheLocal();
-            if (temCache) {
-                renderizarTudo();
+            const cacheSalvo = localStorage.getItem(STORAGE_DATA_KEY);
+            if (cacheSalvo) {
+                try {
+                    const parsed = JSON.parse(cacheSalvo);
+                    if (parsed && Array.isArray(parsed.abas) && parsed.abas.length > 0) {
+                        state.abas = parsed.abas;
+                        atualizarStatusConexao('Cache Local Ativo', 'amber');
+                        renderizarTudo();
+                    }
+                } catch (e) {
+                    console.warn('Cache inválido, buscando da nuvem...', e);
+                }
             }
 
-            // Busca os dados reais da URL da planilha do Google
             await sincronizarPlanilhaGoogle(false);
         });
 
+        function atualizarDataRodape() {
+            const anoEl = document.getElementById('ano-atual');
+            if (anoEl) anoEl.textContent = new Date().getFullYear();
+
+            const dataEl = document.getElementById('data-atual');
+            if (dataEl) {
+                const opcoes = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const fmt = new Date().toLocaleDateString('pt-BR', opcoes);
+                dataEl.textContent = fmt.charAt(0).toUpperCase() + fmt.slice(1);
+            }
+        }
+
         function carregarConfiguracoes() {
             try {
-                const cfg = JSON.parse(localStorage.getItem(STORAGE_CONFIG_KEY) || '{}');
+                const cfg = JSON.parse(localStorage.getItem(STORAGE_CFG_KEY) || '{}');
                 if (cfg.sheetUrl) state.sheetUrl = cfg.sheetUrl;
                 if (cfg.webhookUrl) state.webhookUrl = cfg.webhookUrl;
             } catch (e) {
-                console.warn("Erro ao ler configurações:", e);
+                console.warn('Erro ao carregar configurações:', e);
             }
-            document.getElementById('link-planilha-externa').href = state.sheetUrl;
-        }
-
-        function carregarCacheLocal() {
-            try {
-                const salvo = JSON.parse(localStorage.getItem(STORAGE_DATA_KEY) || 'null');
-                if (salvo && salvo.abas && salvo.abas.length > 0 && salvo.dados) {
-                    state.abas = salvo.abas;
-                    state.dados = salvo.dados;
-                    state.abaAtiva = salvo.abaAtiva || salvo.abas[0];
-                    state.ultimaSync = salvo.ultimaSync || null;
-                    state.fonteDados = "cache-local";
-                    return true;
-                }
-            } catch (e) {
-                console.warn("Cache local indisponível:", e);
-            }
-            return false;
-        }
-
-        function salvarCacheLocal() {
-            try {
-                localStorage.setItem(STORAGE_DATA_KEY, JSON.stringify({
-                    abas: state.abas,
-                    abaAtiva: state.abaAtiva,
-                    dados: state.dados,
-                    ultimaSync: state.ultimaSync
-                }));
-            } catch (e) {
-                console.warn("Erro ao salvar no localStorage:", e);
-            }
+            const linkExt = document.getElementById('link-planilha-externa');
+            if (linkExt) linkExt.href = state.sheetUrl;
         }
 
         // =========================================================================
-        // 2. LEITURA E PARSE DA PLANILHA DO GOOGLE SHEETS (PUBHTML / CORS FALLBACK)
+        // 3. LEITURA E PARSE DA PLANILHA GOOGLE (PUBHTML + FALLBACK CORS)
         // =========================================================================
-        async function sincronizarPlanilhaGoogle(mostrarNotificacao = true) {
+        async function sincronizarPlanilhaGoogle(notificarUsuario = false) {
             const loader = document.getElementById('loading-overlay');
             const iconSync = document.getElementById('icon-sync');
-            loader.classList.remove('hidden');
-            iconSync.classList.add('animate-spin');
+            if (state.abas.length === 0 && loader) loader.classList.remove('hidden');
+            if (iconSync) iconSync.classList.add('animate-spin');
+
+            atualizarStatusConexao('Sincronizando Google Sheets...', 'amber');
 
             try {
-                const htmlPlanilha = await buscarHtmlComFallback(state.sheetUrl);
-                const parsed = parseGooglePubHtml(htmlPlanilha);
+                const html = await buscarHtmlComFallback(state.sheetUrl);
+                const abasExtraidas = extrairAbasDoPubHtml(html);
 
-                if (parsed && parsed.abas.length > 0) {
-                    state.abas = parsed.abas;
-                    state.dados = parsed.dados;
-                    if (!state.abaAtiva || !state.abas.includes(state.abaAtiva)) {
-                        state.abaAtiva = state.abas[0];
-                    }
-                    state.fonteDados = "google-live";
-                    state.ultimaSync = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                    salvarCacheLocal();
+                if (abasExtraidas.length > 0) {
+                    state.abas = abasExtraidas;
+                    if (state.abaAtivaIndex >= state.abas.length) state.abaAtivaIndex = 0;
+
+                    localStorage.setItem(STORAGE_DATA_KEY, JSON.stringify({
+                        timestamp: new Date().toISOString(),
+                        abas: state.abas
+                    }));
+
+                    const agora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    document.getElementById('info-ultima-sync').textContent = `Sincronizado às ${agora}`;
+                    atualizarStatusConexao('Google Sheets Conectado', 'green');
                     renderizarTudo();
-                    if (mostrarNotificacao) {
-                        mostrarToast(`Planilha sincronizada com sucesso! (${state.abas.length} aba(s) carregada(s))`, "success");
+
+                    if (notificarUsuario) {
+                        mostrarToast(`Planilha sincronizada com sucesso! (${state.abas.length} aba(s) carregada(s))`, 'success');
                     }
                 } else {
-                    throw new Error("Nenhuma tabela encontrada no HTML publicado da planilha.");
+                    throw new Error('Nenhuma tabela válida encontrada na URL publicada.');
                 }
             } catch (erro) {
-                console.warn("Aviso na leitura direta da planilha Google:", erro);
-                // Se não houver nenhum dado em cache, carrega a base relacional estruturada para operação imediata
+                console.error('Falha ao ler planilha Google:', erro);
                 if (state.abas.length === 0) {
-                    carregarBaseRelacionalPadrao();
+                    // Cria estrutura demonstrativa inicial caso esteja offline ou sem acesso externo
+                    state.abas = gerarEstruturaExemplo();
                     renderizarTudo();
+                    atualizarStatusConexao('Modo Offline (Dados Locais)', 'red');
+                    mostrarToast('Não foi possível acessar o Google Sheets agora. Modo local ativado.', 'warning');
                 } else {
-                    atualizarStatusConexao();
-                }
-                if (mostrarNotificacao) {
-                    mostrarToast("Não foi possível acessar a planilha online no momento (CORS/Rede). Exibindo dados locais.", "warning");
+                    atualizarStatusConexao('Usando Cache Local', 'amber');
+                    if (notificarUsuario) {
+                        mostrarToast('Falha na rede ao buscar atualização. Mantendo dados locais.', 'warning');
+                    }
                 }
             } finally {
-                loader.classList.add('hidden');
-                iconSync.classList.remove('animate-spin');
+                if (loader) loader.classList.add('hidden');
+                if (iconSync) iconSync.classList.remove('animate-spin');
             }
         }
 
-        // Tenta buscar diretamente e usa proxies públicos seguros caso o navegador bloqueie CORS
         async function buscarHtmlComFallback(url) {
-            const cacheBuster = (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
-            const targetUrl = url + cacheBuster;
-
+            const urlComCacheBust = url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
             const tentativas = [
-                () => fetch(targetUrl).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); }),
-                () => fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`)
-                        .then(r => r.json())
-                        .then(d => { if (!d.contents) throw new Error("AllOrigins vazio"); return d.contents; }),
-                () => fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`)
-                        .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+                urlComCacheBust,
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(urlComCacheBust)}`,
+                `https://corsproxy.io/?${encodeURIComponent(urlComCacheBust)}`
             ];
 
-            for (const tentativa of tentativas) {
+            for (const endpoint of tentativas) {
                 try {
-                    const html = await tentativa();
-                    if (html && (html.includes('<table') || html.includes('ritz'))) {
-                        return html;
+                    const resp = await fetch(endpoint);
+                    if (resp.ok) {
+                        const texto = await resp.text();
+                        if (texto && texto.includes('<table')) return texto;
                     }
                 } catch (e) {
-                    // Tenta o próximo método
+                    // Tenta próximo proxy
                 }
             }
-            throw new Error("Todas as tentativas de leitura da planilha falharam.");
+            throw new Error('Todos os endpoints de leitura falharam.');
         }
 
-        // Faz o parse completo do documento pubhtml do Google Sheets (detectando abas e tabelas)
-        function parseGooglePubHtml(htmlString) {
+        function extrairAbasDoPubHtml(htmlString) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlString, 'text/html');
 
-            // 1. Extrair nomes das abas no menu superior do Google Sheets (#sheet-menu li)
-            const menuItems = Array.from(doc.querySelectorAll('#sheet-menu li'));
-            const nomesAbasMenu = menuItems.map(li => li.textContent.trim()).filter(Boolean);
+            // Extrai nomes das abas pelo menu #sheet-menu do Google Sheets
+            const nomesAbasMap = {};
+            doc.querySelectorAll('#sheet-menu li').forEach(li => {
+                const idRaw = li.id || '';
+                const gid = idRaw.replace('sheet-button-', '');
+                const nome = li.textContent.trim();
+                if (gid && nome) nomesAbasMap[gid] = nome;
+            });
 
-            // 2. Extrair todas as tabelas de dados (.waffle)
-            const tabelas = Array.from(doc.querySelectorAll('table.waffle'));
-            if (tabelas.length === 0) {
-                // Fallback para qualquer table caso a classe mude
-                const todasTabelas = Array.from(doc.querySelectorAll('table'));
-                if (todasTabelas.length > 0) tabelas.push(...todasTabelas);
-            }
+            const abasResultado = [];
+            const containers = doc.querySelectorAll('#sheets-viewport > div');
 
-            const abasDetectadas = [];
-            const dadosExtraidos = {};
+            if (containers.length > 0) {
+                containers.forEach((div, idx) => {
+                    const gid = div.id || String(idx);
+                    const table = div.querySelector('table');
+                    if (!table) return;
 
-            tabelas.forEach((tabela, idx) => {
-                // Descobre o nome da aba correspondente
-                let nomeAba = nomesAbasMenu[idx];
-                if (!nomeAba) {
-                    // Tenta pegar pelo container pai (id numérico do gid)
-                    const containerPai = tabela.closest('[id]');
-                    if (containerPai && containerPai.id) {
-                        const linkAba = doc.querySelector(`#sheet-button-${containerPai.id}`);
-                        if (linkAba) nomeAba = linkAba.textContent.trim();
-                    }
-                }
-                if (!nomeAba) nomeAba = `Aba ${idx + 1}`;
-
-                // Evita duplicatas de nome
-                if (dadosExtraidos[nomeAba]) {
-                    nomeAba = `${nomeAba} (${idx + 1})`;
-                }
-
-                // Extrai linhas da tabela
-                const trs = Array.from(tabela.querySelectorAll('tbody tr'));
-                const matriz = [];
-
-                trs.forEach(tr => {
-                    // Ignora linhas de cabeçalho numérico da grade do Google (row-header-shim)
-                    const tds = Array.from(tr.querySelectorAll('td'));
-                    if (tds.length === 0) return;
-
-                    const valoresLinha = tds.map(td => td.textContent.replace(/\u00a0/g, ' ').trim());
-                    // Verifica se a linha tem algum conteúdo não vazio
-                    if (valoresLinha.some(v => v !== '')) {
-                        matriz.push(valoresLinha);
+                    const nomeAba = nomesAbasMap[gid] || `Aba ${idx + 1}`;
+                    const dadosTabela = parseTabelaGoogle(table);
+                    if (dadosTabela.colunas.length > 0) {
+                        abasResultado.push({
+                            id: gid,
+                            nome: nomeAba,
+                            colunas: dadosTabela.colunas,
+                            linhas: dadosTabela.linhas
+                        });
                     }
                 });
-
-                if (matriz.length > 0) {
-                    // Primeira linha não-vazia vira o cabeçalho das colunas
-                    let rawHeaders = matriz[0];
-                    // Remove colunas totalmente vazias no final
-                    while (rawHeaders.length > 0 && rawHeaders[rawHeaders.length - 1] === '') {
-                        rawHeaders.pop();
-                    }
-
-                    const colunas = rawHeaders.map((h, colIdx) => h || `Coluna ${colIdx + 1}`);
-                    const linhas = [];
-
-                    for (let r = 1; r < matriz.length; r++) {
-                        const rowArr = matriz[r];
-                        const objLinha = {};
-                        let temValor = false;
-
-                        colunas.forEach((colNome, cIdx) => {
-                            const val = (rowArr[cIdx] !== undefined) ? rowArr[cIdx] : '';
-                            objLinha[colNome] = val;
-                            if (val !== '') temValor = true;
+            } else {
+                // Caso haja apenas uma tabela publicada sem viewport
+                const tables = doc.querySelectorAll('table');
+                tables.forEach((table, idx) => {
+                    const dadosTabela = parseTabelaGoogle(table);
+                    if (dadosTabela.colunas.length > 0) {
+                        abasResultado.push({
+                            id: String(idx),
+                            nome: Object.values(nomesAbasMap)[idx] || `Dados ${idx + 1}`,
+                            colunas: dadosTabela.colunas,
+                            linhas: dadosTabela.linhas
                         });
-
-                        if (temValor) {
-                            linhas.push(objLinha);
-                        }
                     }
+                });
+            }
 
-                    abasDetectadas.push(nomeAba);
-                    dadosExtraidos[nomeAba] = {
-                        colunas: colunas,
-                        linhas: linhas
-                    };
+            return abasResultado;
+        }
+
+        function parseTabelaGoogle(table) {
+            const trs = Array.from(table.querySelectorAll('tbody tr'));
+            const matriz = [];
+
+            trs.forEach(tr => {
+                // Ignora linhas auxiliares de cabeçalho de coluna (A, B, C...) do pubhtml
+                if (tr.classList.contains('column-headers-background')) return;
+
+                const celulas = Array.from(tr.querySelectorAll('td'));
+                if (celulas.length === 0) return;
+
+                const valores = celulas.map(td => td.textContent.trim());
+                if (valores.some(v => v !== '')) {
+                    matriz.push(valores);
                 }
             });
 
-            return { abas: abasDetectadas, dados: dadosExtraidos };
-        }
+            if (matriz.length === 0) return { colunas: [], linhas: [] };
 
-        // Base relacional de fallback caso o navegador esteja offline ou a planilha pública vazia
-        function carregarBaseRelacionalPadrao() {
-            state.abas = ["Clientes", "Cotações", "Faturamento", "Frota & Equipamentos"];
-            state.abaAtiva = "Clientes";
-            state.fonteDados = "estrutura-inicial";
-            state.ultimaSync = "Modo Offline / Local";
-            state.dados = {
-                "Clientes": {
-                    colunas: ["ID Cliente", "Cliente / Razão Social", "CNPJ / CPF", "Segmento", "Cidade / UF", "Contato", "Telefone", "Status"],
-                    linhas: [
-                        { "ID Cliente": "CLI-001", "Cliente / Razão Social": "Agropecuária Santa Fé Ltda", "CNPJ / CPF": "12.345.678/0001-90", "Segmento": "Agrícola", "Cidade / UF": "Ribeirão Preto / SP", "Contato": "Carlos Mendes", "Telefone": "(16) 99123-4567", "Status": "Ativo" },
-                        { "ID Cliente": "CLI-002", "Cliente / Razão Social": "Transportadora Rodoviária Express", "CNPJ / CPF": "23.456.789/0001-12", "Segmento": "Linha Pesada", "Cidade / UF": "Uberlândia / MG", "Contato": "Fernanda Souza", "Telefone": "(34) 99876-5432", "Status": "Ativo" },
-                        { "ID Cliente": "CLI-003", "Cliente / Razão Social": "Metalúrgica Aço Forte S.A.", "CNPJ / CPF": "34.567.890/0001-45", "Segmento": "Industrial", "Cidade / UF": "Sorocaba / SP", "Contato": "Roberto Almeida", "Telefone": "(15) 99741-8520", "Status": "Ativo" },
-                        { "ID Cliente": "CLI-004", "Cliente / Razão Social": "Terraplenagem & Mineração Vale Verde", "CNPJ / CPF": "45.678.901/0001-78", "Segmento": "Linha Amarela", "Cidade / UF": "Goiânia / GO", "Contato": "Marcos Oliveira", "Telefone": "(62) 99632-1478", "Status": "Em Negociação" }
-                    ]
-                },
-                "Cotações": {
-                    colunas: ["Nº Cotação", "ID Cliente", "Cliente / Razão Social", "Data", "Produto / Lubrificante", "Quantidade", "Valor Total", "Status Cotação"],
-                    linhas: [
-                        { "Nº Cotação": "COT-2027-01", "ID Cliente": "CLI-001", "Cliente / Razão Social": "Agropecuária Santa Fé Ltda", "Data": "18/11/2026", "Produto / Lubrificante": "Graxa Lítio EP2 Balde 20kg + Óleo 15W40", "Quantidade": "15 Baldes", "Valor Total": "R$ 8.450,00", "Status Cotação": "Aprovada" },
-                        { "Nº Cotação": "COT-2027-02", "ID Cliente": "CLI-002", "Cliente / Razão Social": "Transportadora Rodoviária Express", "Data": "20/11/2026", "Produto / Lubrificante": "Óleo Diesel Sintético 10W40 Tambor 200L", "Quantidade": "4 Tambores", "Valor Total": "R$ 19.200,00", "Status Cotação": "Aprovada" },
-                        { "Nº Cotação": "COT-2027-03", "ID Cliente": "CLI-003", "Cliente / Razão Social": "Metalúrgica Aço Forte S.A.", "Data": "22/11/2026", "Produto / Lubrificante": "Óleo Hidráulico ISO VG 68 Tambor 200L", "Quantidade": "6 Tambores", "Valor Total": "R$ 14.700,00", "Status Cotação": "Aguardando" },
-                        { "Nº Cotação": "COT-2027-04", "ID Cliente": "CLI-001", "Cliente / Razão Social": "Agropecuária Santa Fé Ltda", "Data": "24/11/2026", "Produto / Lubrificante": "Kit Filtros Colheitadeira + Fluido Transmissão", "Quantidade": "8 Kits", "Valor Total": "R$ 6.120,00", "Status Cotação": "Enviada" }
-                    ]
-                },
-                "Faturamento": {
-                    colunas: ["Nº NF-e", "ID Cliente", "Cliente / Razão Social", "Data Emissão", "Vencimento", "Valor Faturado", "Forma Pagamento", "Situação"],
-                    linhas: [
-                        { "Nº NF-e": "NF-004512", "ID Cliente": "CLI-001", "Cliente / Razão Social": "Agropecuária Santa Fé Ltda", "Data Emissão": "19/11/2026", "Vencimento": "19/12/2026", "Valor Faturado": "R$ 8.450,00", "Forma Pagamento": "Boleto 30 dias", "Situação": "Pago" },
-                        { "Nº NF-e": "NF-004518", "ID Cliente": "CLI-002", "Cliente / Razão Social": "Transportadora Rodoviária Express", "Data Emissão": "21/11/2026", "Vencimento": "21/12/2026", "Valor Faturado": "R$ 19.200,00", "Forma Pagamento": "Boleto 28/56 dias", "Situação": "Em Aberto" },
-                        { "Nº NF-e": "NF-004525", "ID Cliente": "CLI-004", "Cliente / Razão Social": "Terraplenagem & Mineração Vale Verde", "Data Emissão": "10/11/2026", "Vencimento": "10/12/2026", "Valor Faturado": "R$ 11.300,00", "Forma Pagamento": "PIX Faturado", "Situação": "Pago" }
-                    ]
-                },
-                "Frota & Equipamentos": {
-                    colunas: ["ID Frota", "ID Cliente", "Cliente / Razão Social", "Equipamento / Veículo", "Modelo", "Lubrificante Recomendado", "Próxima Troca"],
-                    linhas: [
-                        { "ID Frota": "FRT-101", "ID Cliente": "CLI-001", "Cliente / Razão Social": "Agropecuária Santa Fé Ltda", "Equipamento / Veículo": "Trator Pesado 4x4", "Modelo": "John Deere 8R 370", "Lubrificante Recomendado": "Óleo 15W40 CK-4 + Graxa EP2", "Próxima Troca": "500 horas" },
-                        { "ID Frota": "FRT-102", "ID Cliente": "CLI-002", "Cliente / Razão Social": "Transportadora Rodoviária Express", "Equipamento / Veículo": "Cavalo Mecânico", "Modelo": "Scania R450 Highline", "Lubrificante Recomendado": "Sintético 10W40 Ultra", "Próxima Troca": "40.000 km" },
-                        { "ID Frota": "FRT-103", "ID Cliente": "CLI-003", "Cliente / Razão Social": "Metalúrgica Aço Forte S.A.", "Equipamento / Veículo": "Prensa Hidráulica 500T", "Modelo": "Prensa Industrial PH-500", "Lubrificante Recomendado": "Hidráulico ISO VG 68 AW", "Próxima Troca": "2.000 horas" }
-                    ]
-                }
-            };
-            salvarCacheLocal();
-        }
-
-        // =========================================================================
-        // 3. RENDERIZAÇÃO DA INTERFACE (KPIS, ABAS E TABELA)
-        // =========================================================================
-        function renderizarTudo() {
-            atualizarStatusConexao();
-            renderizarKPIs();
-            renderizarAbas();
-            renderizarTabela();
-            lucide.createIcons();
-        }
-
-        function atualizarStatusConexao() {
-            const texto = document.getElementById('texto-conexao');
-            const dot = document.getElementById('status-dot');
-            const infoSync = document.getElementById('info-ultima-sync');
-
-            if (state.fonteDados === "google-live") {
-                texto.textContent = "Google Sheets Conectado";
-                dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
-            } else if (state.fonteDados === "cache-local") {
-                texto.textContent = "Sincronizado (Local + Google)";
-                dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-ambar animate-pulse";
-            } else {
-                texto.textContent = "Base Local Ativa";
-                dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-ambar";
+            // Primeira linha válida vira cabeçalho
+            const rawHeaders = matriz[0];
+            // Remove colunas completamente vazias à direita
+            let ultimoIndiceValido = rawHeaders.length - 1;
+            while (ultimoIndiceValido >= 0 && rawHeaders[ultimoIndiceValido] === '') {
+                ultimoIndiceValido--;
             }
 
-            infoSync.textContent = state.ultimaSync ? `Última atualização: ${state.ultimaSync}` : "";
+            const colunas = [];
+            for (let i = 0; i <= ultimoIndiceValido; i++) {
+                colunas.push(rawHeaders[i] || `Coluna ${i + 1}`);
+            }
+
+            const linhas = [];
+            for (let r = 1; r < matriz.length; r++) {
+                const rowArr = matriz[r];
+                const obj = { _id: `row_${r}_${Date.now()}` };
+                let temConteudo = false;
+
+                colunas.forEach((col, cIdx) => {
+                    const val = (rowArr[cIdx] !== undefined) ? rowArr[cIdx] : '';
+                    if (val !== '') temConteudo = true;
+                    obj[col] = val;
+                });
+
+                if (temConteudo) linhas.push(obj);
+            }
+
+            return { colunas, linhas };
+        }
+
+        // =========================================================================
+        // 4. RENDERIZAÇÃO DA INTERFACE (KPIs, ABAS E TABELA)
+        // =========================================================================
+        function renderizarTudo() {
+            renderizarKPIs();
+            renderizarAbas();
+            renderizarTabelaAtiva();
+            lucide.createIcons();
         }
 
         function renderizarKPIs() {
             const container = document.getElementById('kpi-container');
+            if (!container) return;
+
             const totalAbas = state.abas.length;
-            let totalRegistros = 0;
-            state.abas.forEach(aba => {
-                totalRegistros += (state.dados[aba]?.linhas?.length || 0);
-            });
+            const totalRegistros = state.abas.reduce((acc, aba) => acc + aba.linhas.length, 0);
+            const clientesUnicos = obterListaClientesUnicos().length;
+            const abaAtual = state.abas[state.abaAtivaIndex];
 
-            // Identifica clientes únicos cruzando todas as abas
-            const clientesUnicos = obterListaClientesUnicos();
+            const cards = [
+                {
+                    titulo: 'Clientes Correlacionados',
+                    valor: clientesUnicos,
+                    sub: 'Entidades únicas identificadas',
+                    icon: 'users',
+                    borda: 'border-b-petroleo',
+                    corIcone: 'bg-petroleo text-white'
+                },
+                {
+                    titulo: 'Abas Sincronizadas',
+                    valor: totalAbas,
+                    sub: 'Módulos ativos da planilha',
+                    icon: 'layers',
+                    borda: 'border-b-trator',
+                    corIcone: 'bg-trator text-white'
+                },
+                {
+                    titulo: 'Total de Registros',
+                    valor: totalRegistros,
+                    sub: 'Linhas em toda a base',
+                    icon: 'database',
+                    borda: 'border-b-ambar',
+                    corIcone: 'bg-ambar text-white'
+                },
+                {
+                    titulo: abaAtual ? `Aba: ${abaAtual.nome}` : 'Aba Ativa',
+                    valor: abaAtual ? abaAtual.linhas.length : 0,
+                    sub: 'Registros na aba selecionada',
+                    icon: 'table',
+                    borda: 'border-b-aco',
+                    corIcone: 'bg-aco text-ambar'
+                }
+            ];
 
-            // Soma valores monetários encontrados nas abas
-            let somaFinanceira = 0;
-            state.abas.forEach(aba => {
-                const linhas = state.dados[aba]?.linhas || [];
-                linhas.forEach(linha => {
-                    Object.entries(linha).forEach(([col, val]) => {
-                        if (/valor|total|faturado|preço|preco/i.test(col) && typeof val === 'string') {
-                            const num = parseFloat(val.replace(/[^\d,-]/g, '').replace('.', '').replace(',', '.'));
-                            if (!isNaN(num)) somaFinanceira += num;
-                        }
-                    });
-                });
-            });
-
-            const valorFormatado = somaFinanceira.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-            container.innerHTML = `
-                <div class="card-industrial bg-white rounded-2xl p-5 shadow-md border-2 border-aco/15 border-b-petroleo flex items-center justify-between">
+            container.innerHTML = cards.map(c => `
+                <div class="card-industrial bg-white rounded-2xl p-4 sm:p-5 shadow-md border-2 border-aco/15 ${c.borda} flex items-center justify-between gap-4">
                     <div>
-                        <span class="text-xs font-bold uppercase text-aco/60">Clientes Correlacionados</span>
-                        <p class="font-display text-3xl font-bold text-petroleo mt-1">${clientesUnicos.length}</p>
-                        <span class="text-[11px] text-aco/60">Cruzados entre ${totalAbas} aba(s)</span>
+                        <p class="text-xs font-bold uppercase text-aco/60 tracking-wider">${escapeHtml(c.titulo)}</p>
+                        <p class="font-display text-3xl font-bold text-aco mt-1">${c.valor}</p>
+                        <p class="text-[11px] text-aco/70 mt-0.5">${escapeHtml(c.sub)}</p>
                     </div>
-                    <div class="w-12 h-12 rounded-xl bg-petroleo/10 text-petroleo flex items-center justify-center">
-                        <i data-lucide="users" class="w-6 h-6"></i>
+                    <div class="w-12 h-12 rounded-xl ${c.corIcone} flex items-center justify-center shadow-inner flex-shrink-0">
+                        <i data-lucide="${c.icon}" class="w-6 h-6"></i>
                     </div>
                 </div>
-
-                <div class="card-industrial bg-white rounded-2xl p-5 shadow-md border-2 border-aco/15 border-b-trator flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold uppercase text-aco/60">Abas da Planilha</span>
-                        <p class="font-display text-3xl font-bold text-trator mt-1">${totalAbas}</p>
-                        <span class="text-[11px] text-aco/60 truncate max-w-[160px] block">${state.abas.join(', ')}</span>
-                    </div>
-                    <div class="w-12 h-12 rounded-xl bg-trator/10 text-trator flex items-center justify-center">
-                        <i data-lucide="layers" class="w-6 h-6"></i>
-                    </div>
-                </div>
-
-                <div class="card-industrial bg-white rounded-2xl p-5 shadow-md border-2 border-aco/15 border-b-ambar flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold uppercase text-aco/60">Total de Linhas</span>
-                        <p class="font-display text-3xl font-bold text-aco mt-1">${totalRegistros}</p>
-                        <span class="text-[11px] text-aco/60">Editáveis e sincronizáveis</span>
-                    </div>
-                    <div class="w-12 h-12 rounded-xl bg-ambar/15 text-amber-700 flex items-center justify-center">
-                        <i data-lucide="table-2" class="w-6 h-6"></i>
-                    </div>
-                </div>
-
-                <div class="card-industrial bg-white rounded-2xl p-5 shadow-md border-2 border-aco/15 border-b-aco flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold uppercase text-aco/60">Volume Mapeado</span>
-                        <p class="font-display text-2xl sm:text-3xl font-bold text-aco mt-1">${somaFinanceira > 0 ? valorFormatado : totalRegistros + ' Itens'}</p>
-                        <span class="text-[11px] text-aco/60">Soma das abas financeiras</span>
-                    </div>
-                    <div class="w-12 h-12 rounded-xl bg-aco text-ambar flex items-center justify-center">
-                        <i data-lucide="trending-up" class="w-6 h-6"></i>
-                    </div>
-                </div>
-            `;
+            `).join('');
         }
 
         function renderizarAbas() {
             const container = document.getElementById('tabs-container');
-            container.innerHTML = state.abas.map((aba, index) => {
-                const ativa = aba === state.abaAtiva;
-                const qtd = state.dados[aba]?.linhas?.length || 0;
+            if (!container) return;
+
+            container.innerHTML = state.abas.map((aba, idx) => {
+                const ativa = idx === state.abaAtivaIndex;
                 const classesAtiva = ativa
-                    ? "bg-white text-trator border-t-2 border-x-2 border-aco/15 border-b-white font-bold shadow-xs -mb-px"
-                    : "bg-creme/60 hover:bg-white/80 text-aco/75 hover:text-petroleo border border-transparent";
+                    ? 'bg-white text-trator border-t-4 border-t-trator border-x border-aco/15 font-bold shadow-xs'
+                    : 'bg-creme/60 text-aco/75 hover:bg-white/80 hover:text-petroleo border-t-4 border-t-transparent font-semibold';
 
                 return `
-                    <button 
-                        type="button" 
-                        onclick="selecionarAba('${aba.replace(/'/g, "\\'")}')"
-                        class="px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-display uppercase tracking-wide flex items-center gap-2 transition-all whitespace-nowrap ${classesAtiva}"
+                    <button
+                        type="button"
+                        onclick="selecionarAba(${idx})"
+                        class="px-4 py-2.5 rounded-t-xl text-xs sm:text-sm whitespace-nowrap transition-all flex items-center gap-2 ${classesAtiva}"
                     >
-                        <span class="text-[10px] px-1.5 py-0.5 rounded ${ativa ? 'bg-trator text-white' : 'bg-aco/10 text-aco/70'}">0${index + 1}</span>
-                        <span>${aba}</span>
-                        <span class="text-[11px] font-sans font-semibold px-2 py-0.5 rounded-full ${ativa ? 'bg-petroleo text-white' : 'bg-aco/10 text-aco/70'}">${qtd}</span>
+                        <span>${escapeHtml(aba.nome)}</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] ${ativa ? 'bg-trator text-white' : 'bg-aco/10 text-aco'}">
+                            ${aba.linhas.length}
+                        </span>
                     </button>
                 `;
             }).join('');
         }
 
-        function selecionarAba(nomeAba) {
-            state.abaAtiva = nomeAba;
-            salvarCacheLocal();
-            renderizarAbas();
-            renderizarTabela();
-            lucide.createIcons();
+        function selecionarAba(index) {
+            state.abaAtivaIndex = index;
+            renderizarTudo();
         }
 
-        function filtrarTabela() {
-            const input = document.getElementById('input-busca');
-            const btnLimpar = document.getElementById('btn-limpar-busca');
-            state.termoBusca = input.value.trim().toLowerCase();
-
-            if (state.termoBusca) {
-                btnLimpar.classList.remove('hidden');
-            } else {
-                btnLimpar.classList.add('hidden');
-            }
-
-            renderizarTabela();
-            lucide.createIcons();
-        }
-
-        function limparBusca() {
-            document.getElementById('input-busca').value = '';
-            state.termoBusca = '';
-            document.getElementById('btn-limpar-busca').classList.add('hidden');
-            renderizarTabela();
-            lucide.createIcons();
-        }
-
-        function renderizarTabela() {
-            const abaObj = state.dados[state.abaAtiva];
+        function renderizarTabelaAtiva() {
             const thead = document.getElementById('tabela-head');
             const tbody = document.getElementById('tabela-body');
             const emptyState = document.getElementById('empty-state');
-            const nomeAbaLabel = document.getElementById('nome-aba-ativa');
-            const contadorLabel = document.getElementById('contador-registros');
+            const nomeAbaEl = document.getElementById('nome-aba-ativa');
+            const contadorEl = document.getElementById('contador-registros');
 
-            if (!abaObj) return;
+            const aba = state.abas[state.abaAtivaIndex];
+            if (!aba) return;
 
-            nomeAbaLabel.textContent = `Aba: ${state.abaAtiva}`;
-            const colunas = abaObj.colunas;
-            const todasLinhas = abaObj.linhas;
+            nomeAbaEl.textContent = aba.nome;
 
-            // Filtra mantendo o índice original da linha para edição/exclusão precisa
-            const linhasFiltradas = todasLinhas
-                .map((linha, originalIndex) => ({ linha, originalIndex }))
-                .filter(({ linha }) => {
-                    if (!state.termoBusca) return true;
-                    return Object.values(linha).some(val =>
-                        String(val).toLowerCase().includes(state.termoBusca)
-                    );
-                });
-
-            contadorLabel.textContent = `${linhasFiltradas.length} registro(s) exibido(s)`;
-
-            // Renderiza Cabeçalho
+            // Cabeçalho
             thead.innerHTML = `
                 <tr>
-                    <th class="py-3.5 px-4 w-12 text-center">#</th>
-                    ${colunas.map(col => `<th class="py-3.5 px-4 whitespace-nowrap">${escapeHtml(col)}</th>`).join('')}
-                    <th class="py-3.5 px-4 text-right whitespace-nowrap">Ações</th>
+                    ${aba.colunas.map(col => `<th class="py-3.5 px-4 whitespace-nowrap border-b border-white/15">${escapeHtml(col)}</th>`).join('')}
+                    <th class="py-3.5 px-4 text-right whitespace-nowrap border-b border-white/15 sticky right-0 bg-petroleo">Ações</th>
                 </tr>
             `;
+
+            // Filtragem
+            const termo = state.termoBusca.trim().toLowerCase();
+            const linhasFiltradas = aba.linhas
+                .map((linha, originalIndex) => ({ linha, originalIndex }))
+                .filter(({ linha }) => {
+                    if (!termo) return true;
+                    return aba.colunas.some(col => String(linha[col] || '').toLowerCase().includes(termo));
+                });
+
+            contadorEl.textContent = `${linhasFiltradas.length} registro(s) exibido(s)`;
 
             if (linhasFiltradas.length === 0) {
                 tbody.innerHTML = '';
@@ -1113,257 +1003,256 @@
 
             emptyState.classList.add('hidden');
 
-            // Renderiza Linhas
-            tbody.innerHTML = linhasFiltradas.map(({ linha, originalIndex }, idxVisivel) => {
-                const celulas = colunas.map(col => {
+            tbody.innerHTML = linhasFiltradas.map(({ linha, originalIndex }) => {
+                const celulasHtml = aba.colunas.map((col, cIdx) => {
                     const valor = linha[col] || '';
-                    return `<td class="py-3.5 px-4 whitespace-nowrap max-w-xs truncate" title="${escapeHtml(valor)}">${formatarCelula(col, valor)}</td>`;
+                    const destaque = cIdx === 0 ? 'font-bold text-petroleo' : '';
+                    return `<td class="py-3 px-4 whitespace-nowrap max-w-xs truncate ${destaque}" title="${escapeHtml(valor)}">${formatarCelulaVisual(col, valor)}</td>`;
                 }).join('');
 
                 return `
                     <tr 
-                        onclick="abrirFichaClientePorLinha(${originalIndex})"
-                        class="group hover:bg-ambar/15 cursor-pointer transition-colors"
+                        onclick="abrirFichaClientePorLinha(${state.abaAtivaIndex}, ${originalIndex})"
+                        class="hover:bg-ambar/15 cursor-pointer transition-colors group"
                         title="Clique para abrir a Ficha 360° completa deste cliente em todas as abas"
                     >
-                        <td class="py-3.5 px-4 text-center font-mono text-xs text-aco/50 font-bold group-hover:text-trator">
-                            ${idxVisivel + 1}
-                        </td>
-                        ${celulas}
-                        <td class="py-3.5 px-4 text-right whitespace-nowrap" onclick="event.stopPropagation()">
+                        ${celulasHtml}
+                        <td class="py-2.5 px-4 whitespace-nowrap text-right sticky right-0 bg-white group-hover:bg-[#fbf1e3] border-l border-aco/10" onclick="event.stopPropagation()">
                             <div class="inline-flex items-center gap-1.5">
                                 <button 
-                                    type="button" 
-                                    onclick="abrirFichaClientePorLinha(${originalIndex})"
+                                    type="button"
+                                    onclick="abrirFichaClientePorLinha(${state.abaAtivaIndex}, ${originalIndex})"
                                     class="p-1.5 rounded-lg bg-petroleo/10 hover:bg-petroleo text-petroleo hover:text-white transition-colors"
-                                    title="Ver Ficha 360° do Cliente"
+                                    title="Ver Ficha 360° Correlacionada"
                                 >
-                                    <i data-lucide="eye" class="w-4 h-4"></i>
+                                    <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                                 </button>
                                 <button 
-                                    type="button" 
+                                    type="button"
                                     onclick="abrirModalRegistro(${originalIndex})"
                                     class="p-1.5 rounded-lg bg-ambar/20 hover:bg-ambar text-amber-800 hover:text-white transition-colors"
                                     title="Editar Linha"
                                 >
-                                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                                 </button>
                                 <button 
-                                    type="button" 
+                                    type="button"
                                     onclick="abrirModalExcluir(${originalIndex})"
-                                    class="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-600 text-red-600 hover:text-white transition-colors"
+                                    class="p-1.5 rounded-lg bg-red-100 hover:bg-red-600 text-red-700 hover:text-white transition-colors"
                                     title="Excluir Linha"
                                 >
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
                 `;
             }).join('');
+
+            lucide.createIcons();
         }
 
-        // Formatação visual inteligente para badges de status e valores
-        function formatarCelula(coluna, valor) {
-            if (!valor) return '<span class="text-aco/30 italic">—</span>';
-            const texto = escapeHtml(valor);
+        function formatarCelulaVisual(coluna, valor) {
+            if (!valor) return '<span class="text-aco/30">—</span>';
+            const colLower = coluna.toLowerCase();
+            const valLower = valor.toLowerCase();
 
-            if (/status|situação|situacao/i.test(coluna)) {
-                const v = valor.toLowerCase();
-                let cor = "bg-aco/10 text-aco";
-                if (v.includes('ativo') || v.includes('aprovad') || v.includes('pago') || v.includes('conclu')) {
-                    cor = "bg-emerald-100 text-emerald-800 border border-emerald-300";
-                } else if (v.includes('aberto') || v.includes('aguardando') || v.includes('negocia') || v.includes('enviad')) {
-                    cor = "bg-amber-100 text-amber-800 border border-amber-300";
-                } else if (v.includes('cancel') || v.includes('atras') || v.includes('inativo')) {
-                    cor = "bg-red-100 text-red-800 border border-red-300";
+            // Badges para colunas de status/situação
+            if (colLower.includes('status') || colLower.includes('situa')) {
+                let cor = 'bg-aco/10 text-aco';
+                if (valLower.includes('pago') || valLower.includes('ativo') || valLower.includes('aprov') || valLower.includes('conclu')) {
+                    cor = 'bg-emerald-100 text-emerald-800 border border-emerald-300';
+                } else if (valLower.includes('pend') || valLower.includes('abert') || valLower.includes('aguard') || valLower.includes('negoc')) {
+                    cor = 'bg-amber-100 text-amber-800 border border-amber-300';
+                } else if (valLower.includes('cancel') || valLower.includes('inativ') || valLower.includes('vencid')) {
+                    cor = 'bg-red-100 text-red-800 border border-red-300';
                 }
-                return `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${cor}">${texto}</span>`;
+                return `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${cor}">${escapeHtml(valor)}</span>`;
             }
 
-            if (/id cliente|código|codigo|cotação|cotacao|nf-e|nfe/i.test(coluna)) {
-                return `<span class="font-mono text-xs font-bold text-petroleo bg-petroleo/10 px-2 py-0.5 rounded">${texto}</span>`;
-            }
+            return escapeHtml(valor);
+        }
 
-            if (/valor|total|faturado/i.test(coluna)) {
-                return `<span class="font-semibold text-aco">${texto}</span>`;
-            }
+        function filtrarTabela() {
+            const input = document.getElementById('input-busca');
+            const btnLimpar = document.getElementById('btn-limpar-busca');
+            state.termoBusca = input.value;
 
-            return texto;
+            if (state.termoBusca.length > 0) {
+                btnLimpar.classList.remove('hidden');
+            } else {
+                btnLimpar.classList.add('hidden');
+            }
+            renderizarTabelaAtiva();
+        }
+
+        function limparBusca() {
+            const input = document.getElementById('input-busca');
+            input.value = '';
+            filtrarTabela();
         }
 
         // =========================================================================
-        // 4. LÓGICA DE CORRELAÇÃO ENTRE ABAS E FICHA 360° DO CLIENTE
+        // 5. MOTOR DE CORRELAÇÃO ENTRE ABAS E FICHA 360° DO CLIENTE
         // =========================================================================
-        function identificarChavesCliente(linha) {
-            let idCliente = "";
-            let nomeCliente = "";
-            let cnpjCliente = "";
-
-            Object.entries(linha).forEach(([col, val]) => {
-                const c = col.toLowerCase();
-                const v = String(val || "").trim();
-                if (!v) return;
-
-                if (!idCliente && (c.includes('id cliente') || c === 'id' || c.includes('cod_cliente') || c.includes('código cliente'))) {
-                    idCliente = v;
-                } else if (!nomeCliente && (c.includes('cliente') || c.includes('razão') || c.includes('razao') || c.includes('empresa') || c.includes('nome'))) {
-                    nomeCliente = v;
-                } else if (!cnpjCliente && (c.includes('cnpj') || c.includes('cpf') || c.includes('documento'))) {
-                    cnpjCliente = v;
-                }
-            });
-
-            // Fallback se a planilha tiver colunas genéricas (usa a primeira coluna de texto como identificador)
-            if (!idCliente && !nomeCliente) {
-                const valores = Object.values(linha).map(v => String(v || "").trim()).filter(Boolean);
-                if (valores.length > 0) {
-                    nomeCliente = valores[0];
-                }
+        function identificarColunaChaveCliente(colunas) {
+            const prioridades = ['cliente', 'razão social', 'razao social', 'nome fantasia', 'empresa', 'parceiro', 'nome', 'id_cliente', 'cod_cliente', 'código', 'codigo'];
+            for (const p of prioridades) {
+                const encontrada = colunas.find(c => c.toLowerCase().includes(p));
+                if (encontrada) return encontrada;
             }
+            return colunas[0] || null;
+        }
 
-            return { idCliente, nomeCliente, cnpjCliente };
+        function identificarColunaId(colunas) {
+            return colunas.find(c => {
+                const l = c.toLowerCase();
+                return l === 'id' || l.includes('id_cliente') || l.includes('cod') || l.includes('cnpj') || l.includes('cpf');
+            }) || null;
+        }
+
+        function extrairChavesDaLinha(aba, linha) {
+            const colNome = identificarColunaChaveCliente(aba.colunas);
+            const colId = identificarColunaId(aba.colunas);
+
+            const nomeCliente = colNome ? String(linha[colNome] || '').trim() : '';
+            const idCliente = colId ? String(linha[colId] || '').trim() : '';
+
+            return {
+                nome: nomeCliente || idCliente || 'Registro Selecionado',
+                id: idCliente,
+                termosBusca: [nomeCliente, idCliente]
+                    .map(t => normalizarTexto(t))
+                    .filter(t => t.length >= 2)
+            };
+        }
+
+        function normalizarTexto(str) {
+            return String(str || '')
+                .normalize('NFD')
+                .replace(/[̀-ͯ]/g, '')
+                .toLowerCase()
+                .trim();
         }
 
         function obterListaClientesUnicos() {
             const mapa = new Map();
-
             state.abas.forEach(aba => {
-                const linhas = state.dados[aba]?.linhas || [];
-                linhas.forEach(linha => {
-                    const { idCliente, nomeCliente, cnpjCliente } = identificarChavesCliente(linha);
-                    const chave = (idCliente || nomeCliente || cnpjCliente).toLowerCase();
-                    if (chave && !mapa.has(chave)) {
-                        mapa.set(chave, {
-                            id: idCliente,
-                            nome: nomeCliente || idCliente || cnpjCliente,
-                            cnpj: cnpjCliente
-                        });
+                const colNome = identificarColunaChaveCliente(aba.colunas);
+                if (!colNome) return;
+                aba.linhas.forEach(linha => {
+                    const nome = String(linha[colNome] || '').trim();
+                    if (nome && !mapa.has(normalizarTexto(nome))) {
+                        mapa.set(normalizarTexto(nome), nome);
                     }
                 });
             });
-
-            return Array.from(mapa.values());
+            return Array.from(mapa.values()).sort((a, b) => a.localeCompare(b, 'pt-BR'));
         }
 
-        function abrirFichaClientePorLinha(rowIndex) {
-            const abaObj = state.dados[state.abaAtiva];
-            if (!abaObj || !abaObj.linhas[rowIndex]) return;
+        function abrirFichaClientePorLinha(abaIndex, rowIndex) {
+            const abaOrigem = state.abas[abaIndex];
+            if (!abaOrigem || !abaOrigem.linhas[rowIndex]) return;
 
-            const linhaClicada = abaObj.linhas[rowIndex];
-            const chaves = identificarChavesCliente(linhaClicada);
+            const linhaClicada = abaOrigem.linhas[rowIndex];
+            const chaves = extrairChavesDaLinha(abaOrigem, linhaClicada);
 
-            const tituloNome = chaves.nomeCliente || chaves.idCliente || "Registro Selecionado";
-            document.getElementById('ficha-cliente-nome').textContent = tituloNome;
-            document.getElementById('ficha-cliente-id').textContent = chaves.idCliente ? `ID: ${chaves.idCliente}` : (chaves.cnpjCliente ? `DOC: ${chaves.cnpjCliente}` : `Origem: ${state.abaAtiva}`);
+            document.getElementById('ficha-cliente-nome').textContent = chaves.nome;
+            document.getElementById('ficha-cliente-id').textContent = chaves.id ? `REF: ${chaves.id}` : `Origem: ${abaOrigem.nome}`;
 
-            // Busca todas as linhas correlacionadas em TODAS as abas
-            const resultadosPorAba = {};
+            // Cruza o cliente em TODAS as abas da planilha
             let totalOcorrencias = 0;
+            const resultadosPorAba = state.abas.map((aba, idxAba) => {
+                const correspondencias = aba.linhas
+                    .map((row, idxRow) => ({ row, idxRow }))
+                    .filter(({ row }) => {
+                        // Se for exatamente a linha clicada, inclui
+                        if (idxAba === abaIndex && row === linhaClicada) return true;
 
-            state.abas.forEach(nomeAba => {
-                const linhasAba = state.dados[nomeAba]?.linhas || [];
-                const correspondentes = linhasAba.filter((item, idx) => {
-                    // Se for exatamente a linha clicada na aba ativa, inclui
-                    if (nomeAba === state.abaAtiva && idx === rowIndex) return true;
+                        // Verifica se algum campo da linha corresponde ao nome ou ID do cliente
+                        return aba.colunas.some(col => {
+                            const valNorm = normalizarTexto(row[col]);
+                            if (!valNorm) return false;
+                            return chaves.termosBusca.some(termo => valNorm === termo || (termo.length >= 4 && valNorm.includes(termo)));
+                        });
+                    });
 
-                    const chavesItem = identificarChavesCliente(item);
-
-                    // Compara por ID Cliente
-                    if (chaves.idCliente && chavesItem.idCliente &&
-                        chaves.idCliente.toLowerCase() === chavesItem.idCliente.toLowerCase()) {
-                        return true;
-                    }
-
-                    // Compara por CNPJ/CPF
-                    if (chaves.cnpjCliente && chavesItem.cnpjCliente &&
-                        chaves.cnpjCliente.replace(/\D/g, '') === chavesItem.cnpjCliente.replace(/\D/g, '')) {
-                        return true;
-                    }
-
-                    // Compara por Nome / Razão Social
-                    if (chaves.nomeCliente && chavesItem.nomeCliente &&
-                        chaves.nomeCliente.toLowerCase() === chavesItem.nomeCliente.toLowerCase()) {
-                        return true;
-                    }
-
-                    // Busca textual cruzada caso o nome ou ID apareça em qualquer coluna da outra aba
-                    const termoPrincipal = (chaves.idCliente || chaves.nomeCliente).toLowerCase();
-                    if (termoPrincipal && termoPrincipal.length >= 3) {
-                        return Object.values(item).some(val => String(val).toLowerCase() === termoPrincipal);
-                    }
-
-                    return false;
-                });
-
-                resultadosPorAba[nomeAba] = correspondentes;
-                totalOcorrencias += correspondentes.length;
+                totalOcorrencias += correspondencias.length;
+                return { aba, idxAba, correspondencias };
             });
 
-            // Preenche cards de resumo no topo da Ficha 360°
-            const resumoContainer = document.getElementById('ficha-resumo-cards');
-            resumoContainer.innerHTML = state.abas.slice(0, 4).map(aba => {
-                const qtd = resultadosPorAba[aba]?.length || 0;
-                return `
-                    <div class="bg-white rounded-xl p-3 border border-aco/15 shadow-xs">
-                        <span class="text-[11px] font-bold uppercase text-aco/60 block truncate">${escapeHtml(aba)}</span>
-                        <span class="font-display text-2xl font-bold ${qtd > 0 ? 'text-petroleo' : 'text-aco/30'}">${qtd}</span>
-                        <span class="text-[11px] text-aco/60 ml-1">registro(s)</span>
+            // Cards de resumo superior da Ficha 360°
+            const resumoEl = document.getElementById('ficha-resumo-cards');
+            resumoEl.innerHTML = `
+                <div class="bg-white rounded-xl p-3 border border-aco/15">
+                    <span class="text-[11px] font-bold uppercase text-aco/60 block">Registros Totais</span>
+                    <span class="font-display text-2xl font-bold text-trator">${totalOcorrencias}</span>
+                </div>
+                ${resultadosPorAba.slice(0, 3).map(r => `
+                    <div class="bg-white rounded-xl p-3 border border-aco/15">
+                        <span class="text-[11px] font-bold uppercase text-aco/60 block truncate">${escapeHtml(r.aba.nome)}</span>
+                        <span class="font-display text-2xl font-bold text-petroleo">${r.correspondencias.length}</span>
                     </div>
-                `;
-            }).join('');
+                `).join('')}
+            `;
 
-            // Renderiza o conteúdo detalhado de cada aba dentro do modal
-            const conteudoContainer = document.getElementById('ficha-conteudo-abas');
-            conteudoContainer.innerHTML = state.abas.map(nomeAba => {
-                const colunas = state.dados[nomeAba]?.colunas || [];
-                const itens = resultadosPorAba[nomeAba] || [];
-
-                return `
-                    <div class="bg-white rounded-2xl border-2 border-aco/15 overflow-hidden shadow-sm">
-                        <div class="bg-petroleo/10 px-4 py-3 border-b border-aco/10 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full ${itens.length > 0 ? 'bg-trator' : 'bg-aco/30'}"></span>
-                                <h4 class="font-display text-base sm:text-lg font-bold uppercase text-petroleo">
-                                    ${escapeHtml(nomeAba)}
-                                </h4>
-                                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-petroleo text-white">
-                                    ${itens.length}
-                                </span>
-                            </div>
-
+            // Renderiza blocos detalhados para cada aba
+            const conteudoEl = document.getElementById('ficha-conteudo-abas');
+            conteudoEl.innerHTML = resultadosPorAba.map(({ aba, idxAba, correspondencias }) => {
+                const tabelaInterna = correspondencias.length > 0
+                    ? `
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                                <thead class="bg-cremeEscuro text-aco font-display uppercase text-xs">
+                                    <tr>
+                                        ${aba.colunas.map(c => `<th class="py-2.5 px-3 whitespace-nowrap border-b border-aco/15">${escapeHtml(c)}</th>`).join('')}
+                                        <th class="py-2.5 px-3 text-right border-b border-aco/15">Editar</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-aco/10 bg-white">
+                                    ${correspondencias.map(({ row, idxRow }) => `
+                                        <tr class="hover:bg-creme/50">
+                                            ${aba.colunas.map(c => `<td class="py-2.5 px-3 whitespace-nowrap">${formatarCelulaVisual(c, row[c] || '')}</td>`).join('')}
+                                            <td class="py-2 px-3 text-right">
+                                                <button 
+                                                    type="button"
+                                                    onclick="fecharModalFicha(); selecionarAba(${idxAba}); abrirModalRegistro(${idxRow});"
+                                                    class="px-2.5 py-1 rounded-lg bg-petroleo/10 hover:bg-petroleo text-petroleo hover:text-white text-xs font-bold transition-colors"
+                                                >
+                                                    Editar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `
+                    : `
+                        <div class="p-4 bg-white text-xs text-aco/60 italic flex items-center justify-between">
+                            <span>Nenhum registro vinculado a este cliente na aba "${escapeHtml(aba.nome)}".</span>
                             <button 
-                                type="button" 
-                                onclick="adicionarRegistroParaClienteNaAba('${nomeAba.replace(/'/g, "\\'")}', '${escapeHtml(chaves.idCliente).replace(/'/g, "\\'")}', '${escapeHtml(chaves.nomeCliente).replace(/'/g, "\\'")}')"
-                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-trator hover:bg-tratorHover text-white text-xs font-bold transition-colors"
+                                type="button"
+                                onclick="fecharModalFicha(); selecionarAba(${idxAba}); abrirModalRegistro(null, '${escapeHtml(chaves.nome).replace(/'/g, "\'")}');"
+                                class="px-3 py-1.5 rounded-lg bg-trator hover:bg-tratorHover text-white font-bold not-italic transition-colors"
                             >
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                                <span>Adicionar em ${escapeHtml(nomeAba)}</span>
+                                + Vincular em ${escapeHtml(aba.nome)}
                             </button>
                         </div>
+                    `;
 
-                        ${itens.length === 0 ? `
-                            <div class="p-4 text-xs text-aco/60 italic">
-                                Nenhum registro vinculado a este cliente encontrado na aba "${escapeHtml(nomeAba)}".
+                return `
+                    <div class="rounded-2xl border-2 border-aco/15 overflow-hidden shadow-sm">
+                        <div class="bg-petroleo text-white px-4 py-2.5 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-ambar"></span>
+                                <h4 class="font-display text-base font-bold uppercase tracking-wide">${escapeHtml(aba.nome)}</h4>
                             </div>
-                        ` : `
-                            <div class="overflow-x-auto custom-scrollbar">
-                                <table class="w-full text-left border-collapse text-xs sm:text-sm">
-                                    <thead class="bg-cremeEscuro text-aco font-display uppercase text-xs">
-                                        <tr>
-                                            ${colunas.map(c => `<th class="py-2.5 px-3.5 whitespace-nowrap">${escapeHtml(c)}</th>`).join('')}
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-aco/10">
-                                        ${itens.map(item => `
-                                            <tr class="hover:bg-creme/50">
-                                                ${colunas.map(c => `<td class="py-2.5 px-3.5 whitespace-nowrap">${formatarCelula(c, item[c])}</td>`).join('')}
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                        `}
+                            <span class="px-2.5 py-0.5 rounded-full bg-white/15 text-xs font-bold">
+                                ${correspondencias.length} registro(s)
+                            </span>
+                        </div>
+                        ${tabelaInterna}
                     </div>
                 `;
             }).join('');
@@ -1380,66 +1269,53 @@
             modal.classList.remove('flex');
         }
 
-        function adicionarRegistroParaClienteNaAba(nomeAba, idCliente, nomeCliente) {
-            fecharModalFicha();
-            selecionarAba(nomeAba);
-            abrirModalRegistro(null, { idCliente, nomeCliente });
-        }
-
         // =========================================================================
-        // 5. CRUD COMPLETO (ADICIONAR, EDITAR E EXCLUIR LINHAS)
+        // 6. CRUD COMPLETO (ADICIONAR, EDITAR E EXCLUIR REGISTROS)
         // =========================================================================
-        function abrirModalRegistro(rowIndex = null, prefillCliente = null) {
-            state.editandoIndex = rowIndex;
-            const abaObj = state.dados[state.abaAtiva];
-            if (!abaObj) return;
+        function abrirModalRegistro(rowIndex = null, clientePreSelecionado = '') {
+            const aba = state.abas[state.abaAtivaIndex];
+            if (!aba) return;
 
-            const isEdicao = rowIndex !== null;
-            const registroAtual = isEdicao ? abaObj.linhas[rowIndex] : {};
+            const isEdicao = rowIndex !== null && rowIndex !== undefined;
+            state.editandoInfo = isEdicao ? { abaIndex: state.abaAtivaIndex, rowIndex } : null;
 
-            document.getElementById('modal-registro-titulo').textContent = isEdicao ? "Editar Registro" : "Novo Registro";
-            document.getElementById('modal-registro-subtitulo').textContent = `Aba selecionada: ${state.abaAtiva}`;
+            document.getElementById('modal-registro-titulo').textContent = isEdicao ? 'Editar Registro' : 'Novo Registro';
+            document.getElementById('modal-registro-subtitulo').textContent = `Aba: ${aba.nome}`;
 
-            // Preenche seletor de clientes correlacionados
+            // Configura seletor rápido de vínculo de cliente
             const boxCorrelacao = document.getElementById('box-correlacao-cliente');
             const selectCliente = document.getElementById('select-cliente-correlacao');
-            const clientes = obterListaClientesUnicos();
+            const clientesUnicos = obterListaClientesUnicos();
 
-            if (clientes.length > 0 && !/cliente/i.test(state.abaAtiva)) {
+            if (clientesUnicos.length > 0) {
                 boxCorrelacao.classList.remove('hidden');
                 selectCliente.innerHTML = `<option value="">-- Selecione um cliente cadastrado para vincular --</option>` +
-                    clientes.map((cli, i) => `<option value="${i}">${escapeHtml(cli.id ? cli.id + ' - ' : '')}${escapeHtml(cli.nome)}</option>`).join('');
+                    clientesUnicos.map(cli => `<option value="${escapeHtml(cli)}">${escapeHtml(cli)}</option>`).join('');
             } else {
                 boxCorrelacao.classList.add('hidden');
             }
 
-            // Gera os campos dinâmicos baseados nas colunas da aba
-            const camposContainer = document.getElementById('campos-formulario');
-            camposContainer.innerHTML = abaObj.colunas.map((col, idx) => {
-                let valorInicial = isEdicao ? (registroAtual[col] || '') : '';
+            // Gera campos do formulário dinamicamente
+            const linhaAtual = isEdicao ? aba.linhas[rowIndex] : {};
+            const colCliente = identificarColunaChaveCliente(aba.colunas);
+            const containerCampos = document.getElementById('campos-formulario');
 
-                // Pré-preenchimento se vier da Ficha 360° do Cliente
-                if (!isEdicao && prefillCliente) {
-                    if (/id cliente/i.test(col) && prefillCliente.idCliente) valorInicial = prefillCliente.idCliente;
-                    if (/cliente|razão|razao|empresa/i.test(col) && !/id/i.test(col) && prefillCliente.nomeCliente) valorInicial = prefillCliente.nomeCliente;
-                }
-
-                // Sugestão automática de ID se for novo registro na coluna de ID
-                if (!isEdicao && idx === 0 && !valorInicial && (/id|código|codigo|cotação|nf/i.test(col))) {
-                    const prefixo = state.abaAtiva.substring(0, 3).toUpperCase();
-                    const proximoNum = String(abaObj.linhas.length + 1).padStart(3, '0');
-                    valorInicial = `${prefixo}-${proximoNum}`;
+            containerCampos.innerHTML = aba.colunas.map((col, idx) => {
+                let valorInicial = isEdicao ? (linhaAtual[col] || '') : '';
+                if (!isEdicao && clientePreSelecionado && col === colCliente) {
+                    valorInicial = clientePreSelecionado;
                 }
 
                 return `
                     <div>
-                        <label class="block text-xs font-bold uppercase text-aco mb-1">${escapeHtml(col)}</label>
+                        <label class="block text-xs font-bold uppercase text-petroleo mb-1">${escapeHtml(col)}</label>
                         <input 
                             type="text" 
+                            name="campo_${idx}"
                             data-coluna="${escapeHtml(col)}"
                             value="${escapeHtml(valorInicial)}"
                             placeholder="Digite ${escapeHtml(col)}..."
-                            class="input-campo-registro w-full px-3.5 py-2.5 rounded-xl bg-white border border-aco/25 text-sm text-aco focus:outline-none focus:border-petroleo"
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-aco/25 text-sm text-aco focus:outline-none focus:border-trator"
                         >
                     </div>
                 `;
@@ -1451,21 +1327,15 @@
             lucide.createIcons();
         }
 
-        function aplicarClienteCorrelacionado(indexCliente) {
-            if (indexCliente === "") return;
-            const clientes = obterListaClientesUnicos();
-            const cli = clientes[Number(indexCliente)];
-            if (!cli) return;
+        function aplicarClienteCorrelacionado(nomeCliente) {
+            if (!nomeCliente) return;
+            const aba = state.abas[state.abaAtivaIndex];
+            const colCliente = identificarColunaChaveCliente(aba.colunas);
+            const inputs = document.querySelectorAll('#campos-formulario input');
 
-            const inputs = document.querySelectorAll('.input-campo-registro');
-            inputs.forEach(input => {
-                const col = input.getAttribute('data-coluna').toLowerCase();
-                if (col.includes('id cliente') || col === 'id') {
-                    input.value = cli.id || '';
-                } else if (col.includes('cliente') || col.includes('razão') || col.includes('razao') || col.includes('empresa')) {
-                    input.value = cli.nome || '';
-                } else if (col.includes('cnpj') || col.includes('cpf')) {
-                    input.value = cli.cnpj || '';
+            inputs.forEach(inp => {
+                if (inp.getAttribute('data-coluna') === colCliente) {
+                    inp.value = nomeCliente;
                 }
             });
         }
@@ -1474,56 +1344,60 @@
             const modal = document.getElementById('modal-registro');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            state.editandoIndex = null;
+            state.editandoInfo = null;
         }
 
         async function salvarRegistro(event) {
             event.preventDefault();
-            const abaObj = state.dados[state.abaAtiva];
-            if (!abaObj) return;
+            const aba = state.abas[state.abaAtivaIndex];
+            if (!aba) return;
 
-            const novoObj = {};
-            const inputs = document.querySelectorAll('.input-campo-registro');
-            inputs.forEach(input => {
-                const col = input.getAttribute('data-coluna');
-                novoObj[col] = input.value.trim();
+            const inputs = Array.from(document.querySelectorAll('#campos-formulario input'));
+            const novoObjeto = { _id: `row_${Date.now()}` };
+            const valoresArray = [];
+
+            inputs.forEach(inp => {
+                const col = inp.getAttribute('data-coluna');
+                const val = inp.value.trim();
+                novoObjeto[col] = val;
+                valoresArray.push(val);
             });
 
-            const isEdicao = state.editandoIndex !== null;
-            const rowIndexAlvo = state.editandoIndex;
-
-            if (isEdicao) {
-                abaObj.linhas[rowIndexAlvo] = novoObj;
+            if (state.editandoInfo) {
+                const { rowIndex } = state.editandoInfo;
+                aba.linhas[rowIndex] = novoObjeto;
+                await enviarParaAppsScript({
+                    acao: 'editar',
+                    aba: aba.nome,
+                    rowIndex: rowIndex,
+                    valores: valoresArray
+                });
+                mostrarToast('Registro atualizado com sucesso!', 'success');
             } else {
-                abaObj.linhas.push(novoObj);
+                aba.linhas.push(novoObjeto);
+                await enviarParaAppsScript({
+                    acao: 'adicionar',
+                    aba: aba.nome,
+                    valores: valoresArray
+                });
+                mostrarToast('Novo registro adicionado com sucesso!', 'success');
             }
 
-            salvarCacheLocal();
-            renderizarTudo();
+            persistirEstadoLocal();
             fecharModalRegistro();
-
-            mostrarToast(isEdicao ? "Registro atualizado com sucesso!" : "Novo registro adicionado com sucesso!", "success");
-
-            // Envia para o Webhook do Google Apps Script se estiver configurado
-            await enviarParaGoogleAppsScript({
-                acao: isEdicao ? 'editar' : 'adicionar',
-                aba: state.abaAtiva,
-                colunas: abaObj.colunas,
-                registro: novoObj,
-                rowIndex: isEdicao ? rowIndexAlvo : abaObj.linhas.length - 1
-            });
+            renderizarTudo();
         }
 
         function abrirModalExcluir(rowIndex) {
-            state.excluindoIndex = rowIndex;
-            const abaObj = state.dados[state.abaAtiva];
-            const linha = abaObj?.linhas[rowIndex];
-            const resumo = linha ? Object.values(linha).slice(0, 3).filter(Boolean).join(' • ') : '';
+            const aba = state.abas[state.abaAtivaIndex];
+            if (!aba || !aba.linhas[rowIndex]) return;
 
-            document.getElementById('texto-confirmar-exclusao').innerHTML = `
-                Tem certeza que deseja excluir esta linha da aba <strong>${escapeHtml(state.abaAtiva)}</strong>?<br>
-                <span class="text-xs text-petroleo font-semibold mt-1 block">${escapeHtml(resumo)}</span>
-            `;
+            state.excluindoInfo = { abaIndex: state.abaAtivaIndex, rowIndex };
+            const linha = aba.linhas[rowIndex];
+            const resumo = aba.colunas.slice(0, 2).map(c => `${c}: ${linha[c] || '—'}`).join(' | ');
+
+            document.getElementById('texto-confirmar-exclusao').textContent =
+                `Deseja realmente excluir o registro (${resumo}) da aba "${aba.nome}"?`;
 
             const modal = document.getElementById('modal-excluir');
             modal.classList.remove('hidden');
@@ -1535,29 +1409,30 @@
             const modal = document.getElementById('modal-excluir');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            state.excluindoIndex = null;
+            state.excluindoInfo = null;
         }
 
         async function confirmarExclusao() {
-            const idx = state.excluindoIndex;
-            const abaObj = state.dados[state.abaAtiva];
-            if (idx === null || !abaObj) return;
+            if (!state.excluindoInfo) return;
+            const { abaIndex, rowIndex } = state.excluindoInfo;
+            const aba = state.abas[abaIndex];
 
-            abaObj.linhas.splice(idx, 1);
-            salvarCacheLocal();
-            renderizarTudo();
+            if (aba && aba.linhas[rowIndex]) {
+                aba.linhas.splice(rowIndex, 1);
+                await enviarParaAppsScript({
+                    acao: 'excluir',
+                    aba: aba.nome,
+                    rowIndex: rowIndex
+                });
+                persistirEstadoLocal();
+                renderizarTudo();
+                mostrarToast('Linha excluída com sucesso.', 'success');
+            }
+
             fecharModalExcluir();
-
-            mostrarToast("Linha excluída da base de dados.", "info");
-
-            await enviarParaGoogleAppsScript({
-                acao: 'excluir',
-                aba: state.abaAtiva,
-                rowIndex: idx
-            });
         }
 
-        async function enviarParaGoogleAppsScript(payload) {
+        async function enviarParaAppsScript(payload) {
             if (!state.webhookUrl) return;
             try {
                 await fetch(state.webhookUrl, {
@@ -1566,15 +1441,31 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                mostrarToast("Alteração enviada para a Planilha Google (Apps Script).", "success");
             } catch (e) {
-                console.error("Erro ao enviar para Apps Script:", e);
-                mostrarToast("Salvo localmente, mas houve falha ao enviar ao Apps Script.", "warning");
+                console.warn('Erro ao enviar alteração para o Google Apps Script:', e);
+                mostrarToast('Salvo localmente. Verifique a URL do Apps Script para gravação remota.', 'warning');
             }
         }
 
+        function persistirEstadoLocal() {
+            try {
+                localStorage.setItem(STORAGE_DATA_KEY, JSON.stringify({
+                    timestamp: new Date().toISOString(),
+                    abas: state.abas
+                }));
+            } catch (e) {
+                console.warn('Não foi possível salvar no localStorage:', e);
+            }
+        }
+
+        async function resetarParaPlanilhaOriginal() {
+            localStorage.removeItem(STORAGE_DATA_KEY);
+            state.abas = [];
+            await sincronizarPlanilhaGoogle(true);
+        }
+
         // =========================================================================
-        // 6. CONFIGURAÇÕES, EXPORTAÇÃO E UTILITÁRIOS
+        // 7. CONFIGURAÇÃO, EXPORTAÇÃO CSV E UTILITÁRIOS
         // =========================================================================
         function abrirModalConfig() {
             document.getElementById('input-sheet-url').value = state.sheetUrl;
@@ -1593,87 +1484,117 @@
 
         async function salvarConfiguracoes(event) {
             event.preventDefault();
-            state.sheetUrl = document.getElementById('input-sheet-url').value.trim() || DEFAULT_SHEET_URL;
+            state.sheetUrl = document.getElementById('input-sheet-url').value.trim();
             state.webhookUrl = document.getElementById('input-webhook-url').value.trim();
 
-            try {
-                localStorage.setItem(STORAGE_CONFIG_KEY, JSON.stringify({
-                    sheetUrl: state.sheetUrl,
-                    webhookUrl: state.webhookUrl
-                }));
-            } catch (e) {}
+            localStorage.setItem(STORAGE_CFG_KEY, JSON.stringify({
+                sheetUrl: state.sheetUrl,
+                webhookUrl: state.webhookUrl
+            }));
 
             document.getElementById('link-planilha-externa').href = state.sheetUrl;
             fecharModalConfig();
             await sincronizarPlanilhaGoogle(true);
         }
 
-        async function resetarParaPlanilhaOriginal() {
-            localStorage.removeItem(STORAGE_DATA_KEY);
-            state.abas = [];
-            state.dados = {};
-            await sincronizarPlanilhaGoogle(true);
+        function copiarCodigoAppsScript() {
+            const codigo = document.getElementById('codigo-apps-script').textContent;
+            navigator.clipboard.writeText(codigo).then(() => {
+                mostrarToast('Código Apps Script copiado para a área de transferência!', 'success');
+            });
         }
 
         function exportarCSVAtivo() {
-            const abaObj = state.dados[state.abaAtiva];
-            if (!abaObj) return;
+            const aba = state.abas[state.abaAtivaIndex];
+            if (!aba) return;
 
-            const linhasCSV = [];
-            linhasCSV.push(abaObj.colunas.map(c => `"${String(c).replace(/"/g, '""')}"`).join(';'));
+            const linhasCsv = [
+                aba.colunas.map(c => `"${String(c).replace(/"/g, '""')}"`).join(';')
+            ];
 
-            abaObj.linhas.forEach(linha => {
-                const row = abaObj.colunas.map(c => `"${String(linha[c] || '').replace(/"/g, '""')}"`);
-                linhasCSV.push(row.join(';'));
+            aba.linhas.forEach(row => {
+                const vals = aba.colunas.map(c => `"${String(row[c] || '').replace(/"/g, '""')}"`);
+                linhasCsv.push(vals.join(';'));
             });
 
-            const blob = new Blob(["\uFEFF" + linhasCSV.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob(['﻿' + linhasCsv.join('
+')], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `BEMHES_2027_${state.abaAtiva.replace(/\s+/g, '_')}.csv`;
+            a.download = `BEMHES_2027_${aba.nome.replace(/\s+/g, '_')}.csv`;
             a.click();
             URL.revokeObjectURL(url);
-            mostrarToast(`Arquivo CSV da aba "${state.abaAtiva}" exportado!`, "success");
         }
 
-        function copiarCodigoAppsScript() {
-            const textarea = document.getElementById('codigo-apps-script');
-            textarea.select();
-            document.execCommand('copy');
-            mostrarToast("Código Google Apps Script copiado para a área de transferência!", "success");
+        function atualizarStatusConexao(texto, cor) {
+            const textoEl = document.getElementById('texto-conexao');
+            const dotEl = document.getElementById('status-dot');
+            if (textoEl) textoEl.textContent = texto;
+            if (dotEl) {
+                dotEl.className = 'inline-block w-2.5 h-2.5 rounded-full ' +
+                    (cor === 'green' ? 'bg-emerald-400' : cor === 'red' ? 'bg-red-500' : 'bg-ambar animate-pulse');
+            }
         }
 
-        function mostrarToast(mensagem, tipo = "info") {
+        function mostrarToast(mensagem, tipo = 'success') {
             const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
+            if (!container) return;
 
-            const estilos = {
-                success: "bg-aco border-l-4 border-emerald-400 text-white",
-                warning: "bg-aco border-l-4 border-ambar text-white",
-                info: "bg-petroleo border-l-4 border-trator text-white"
+            const cores = {
+                success: 'bg-aco border-l-4 border-emerald-400 text-white',
+                warning: 'bg-aco border-l-4 border-ambar text-white',
+                error: 'bg-red-900 border-l-4 border-red-400 text-white'
             };
 
-            toast.className = `${estilos[tipo] || estilos.info} px-4 py-3 rounded-xl shadow-xl text-xs sm:text-sm font-medium flex items-center justify-between gap-3 pointer-events-auto animate-modal`;
-            toast.innerHTML = `
-                <span>${escapeHtml(mensagem)}</span>
-                <button type="button" onclick="this.parentElement.remove()" class="text-white/70 hover:text-white">✕</button>
-            `;
-
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto px-4 py-3 rounded-xl shadow-xl text-xs sm:text-sm font-medium animate-modal ${cores[tipo] || cores.success}`;
+            toast.textContent = mensagem;
             container.appendChild(toast);
+
             setTimeout(() => {
-                if (toast.parentElement) toast.remove();
-            }, 4500);
+                toast.remove();
+            }, 4000);
         }
 
         function escapeHtml(str) {
-            return String(str)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function gerarEstruturaExemplo() {
+            return [
+                {
+                    id: '0',
+                    nome: 'Clientes',
+                    colunas: ['ID', 'Cliente', 'CNPJ/CPF', 'Cidade/UF', 'Segmento', 'Status'],
+                    linhas: [
+                        { _id: '1', 'ID': 'CLI-001', 'Cliente': 'Agropecuária Boa Safra', 'CNPJ/CPF': '12.345.678/0001-90', 'Cidade/UF': 'Mandaguari/PR', 'Segmento': 'Agrícola', 'Status': 'Ativo' }
+                    ]
+                },
+                {
+                    id: '1',
+                    nome: 'Cotações',
+                    colunas: ['Cotação', 'Cliente', 'Produto', 'Quantidade', 'Valor Total', 'Status'],
+                    linhas: [
+                        { _id: '2', 'Cotação': 'COT-2027-01', 'Cliente': 'Agropecuária Boa Safra', 'Produto': 'Premalube Xtreme 20kg', 'Quantidade': '4 Baldes', 'Valor Total': 'R$ 3.480,00', 'Status': 'Aprovado' }
+                    ]
+                },
+                {
+                    id: '2',
+                    nome: 'Faturamento',
+                    colunas: ['NF', 'Cliente', 'Data Emissão', 'Vencimento', 'Valor', 'Status'],
+                    linhas: [
+                        { _id: '3', 'NF': 'NF-9845', 'Cliente': 'Agropecuária Boa Safra', 'Data Emissão': '20/11/2026', 'Vencimento': '20/12/2026', 'Valor': 'R$ 3.480,00', 'Status': 'Pago' }
+                    ]
+                }
+            ];
         }
     </script>
 </body>
 </html>
+Analisando
