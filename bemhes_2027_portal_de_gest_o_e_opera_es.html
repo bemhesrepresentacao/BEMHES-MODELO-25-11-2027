@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEMHES 2027 — Portal de Gestão e Operações</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fontes Google: Oswald (Títulos Industriais) e Inter (Textos e Interface) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Configuração de Cores e Fontes Customizadas no Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        creme: '#F7F3EA',        /* Fundo exato da borda da logo */
+                        cremeEscuro: '#ECE5D5',  /* Tom secundário de superfície */
+                        trator: '#D9531E',       /* Laranja vibrante do trator */
+                        tratorHover: '#B84214',  /* Laranja escuro para hover */
+                        petroleo: '#1E4863',     /* Azul do macacão e tipografia */
+                        petroleoHover: '#153448',/* Azul escuro para hover */
+                        aco: '#1C2226',          /* Cinza aço escuro das engrenagens */
+                        ambar: '#E08E2B',        /* Dourado/âmbar da graxa e engrenagens */
+                    },
+                    fontFamily: {
+                        display: ['Oswald', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Padrão sutil de textura industrial no fundo creme */
+        body {
+            background-color: #F7F3EA;
+            background-image: radial-gradient(#d8cfbc 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: #1C2226;
+        }
+
+        /* Estilo de borda chanfrada/robusta para os cards */
+        .card-industrial {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom-width: 5px;
+        }
+
+        .card-industrial:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Animação suave de rotação da engrenagem no hover */
+        .group:hover .gear-spin {
+            transform: rotate(90deg);
+        }
+        .gear-spin {
+            transition: transform 0.5s ease-in-out;
+        }
+
+        /* Estilização da barra de rolagem das tabelas */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #ECE5D5;
+            border-radius: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #1E4863;
+            border-radius: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #D9531E;
+        }
+
+        /* Animação de entrada para modais e toasts */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-modal {
+            animation: fadeSlideUp 0.22s ease-out forwards;
+        }
+    </style>
+
+    <!-- Metatags para WhatsApp e Redes Sociais (Open Graph) -->
+    <meta property="og:title" content="BEMHES 2027 - Lubrificantes e Soluções Industriais">
+    <meta property="og:description" content="Portal de atendimento, cotações, faturamento e gestão comercial.">
+    <meta property="og:image" content="https://bemhesrepresentacao.github.io/Bemhes-2027/MARCAO%20DA%20GRAXA.jpg">
+    <meta property="og:url" content="https://bemhesrepresentacao.github.io/Bemhes-2027/">
+    <meta property="og:type" content="website">
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-trator selection:text-white">
+
+    <!-- ===================================================================== -->
+    <!-- 1. CABEÇALHO (HEADER) - MANTIDO FIELMENTE DO ORIGINAL                 -->
+    <!-- ===================================================================== -->
+    <header class="w-full bg-aco text-white shadow-lg border-b-4 border-trator">
+        <!-- Faixa Institucional Superior -->
+        <div class="bg-petroleo/90 border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm text-creme/90 gap-2">
+                <div class="flex items-center gap-2 font-medium">
+                    <span id="status-dot" class="inline-block w-2.5 h-2.5 rounded-full bg-ambar animate-pulse"></span>
+                    <span>BEMHES 2027 — Soluções em Lubrificação Industrial, Agrícola e Automotiva</span>
+                </div>
+                <div class="flex items-center gap-3 text-creme/80">
+                    <span id="data-atual" class="hidden md:inline"></span>
+                    <span id="badge-conexao" class="px-2.5 py-0.5 rounded bg-aco/70 text-ambar font-semibold text-xs border border-ambar/30 flex items-center gap-1.5">
+                        <i data-lucide="database" class="w-3 h-3"></i>
+                        <span id="texto-conexao">Conectando Planilha...</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área Principal do Cabeçalho com a Logo Intacta -->
+        <div class="bg-creme text-aco py-5 sm:py-7 px-4 sm:px-6 border-b border-aco/15">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+                
+                <!-- LOGO ORIGINAL MANTIDA 100% SEM ALTERAÇÃO -->
+                <div class="flex-shrink-0 flex justify-center">
+                    <div class="rounded-2xl overflow-hidden shadow-md border-2 border-aco/15 bg-[#F7F3EA] p-1">
+                        <!-- TAMANHO DA LOGO: ALTERE AQUI -->
+                        <img 
+                            src="MARCAO DA GRAXA.jpg" 
+                            alt="Logo Oficial Marcão da Graxa" 
+                            style="width: 100px; height: auto;"
+                            class="object-contain block rounded-xl"
+                            onerror="this.onerror=null; this.src='https://placehold.co/400x400/F7F3EA/1C2226?text=MARCÃO+DA+GRAXA.jpg';"
+                        >
+                    </div>
+                </div>
+
+                <!-- Título e Apresentação do Portal -->
+                <div class="text-center md:text-left flex-1 md:pl-4">
+                    <h4 class="font-display text-3xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-aco leading-none mb-2">
+                        BEMHES <span class="text-trator">2027</span>
+                    </h4>
+                    <p class="text-aco/80 text-sm sm:text-base max-w-2xl leading-relaxed">
+                        Lubrificantes e Manutenção Especializada — Linha Pesada, Agrícola e Industrial.
+                    </p>
+                </div>
+
+                <!-- Controles Rápidos de Sincronização no Cabeçalho -->
+                <div class="flex flex-wrap items-center justify-center md:justify-end gap-2.5">
+                    <button 
+                        type="button" 
+                        onclick="sincronizarPlanilhaGoogle(true)"
+                        id="btn-sync-header"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-petroleo hover:bg-petroleoHover text-white text-xs sm:text-sm font-bold shadow-md transition-all"
+                        title="Recarregar dados direto da Planilha Google Sheets"
+                    >
+                        <i data-lucide="refresh-cw" id="icon-sync" class="w-4 h-4"></i>
+                        <span>Sincronizar Planilha</span>
+                    </button>
+
+                    <button 
+                        type="button" 
+                        onclick="abrirModalConfig()"
+                        class="group inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-aco hover:bg-black text-creme text-xs sm:text-sm font-bold shadow-md border border-aco transition-all"
+                        title="Configurar URL da Planilha Google e Webhook de Gravação"
+                    >
+                        <i data-lucide="settings" class="w-4 h-4 text-ambar gear-spin"></i>
+                        <span>Configurar Integração</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================================================================== -->
+    <!-- 2. SEÇÃO PRINCIPAL DE GESTÃO INTEGRADA (PLANILHA GOOGLE CORRELACIONADA)-->
+    <!-- ===================================================================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-10">
+
+        <!-- KPIs / RESUMO GERENCIAL RÁPIDO -->
+        <section id="kpi-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <!-- Preenchido dinamicamente pelo JS -->
+        </section>
+
+        <!-- BARRA DE ABAS DINÂMICAS DA PLANILHA + FERRAMENTAS -->
+        <section class="bg-white rounded-2xl shadow-xl border-2 border-aco/15 overflow-hidden">
+            
+            <!-- Cabeçalho do Painel de Dados -->
+            <div class="bg-aco text-white px-5 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b-4 border-trator">
+                <div>
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-2.5 h-6 bg-trator rounded-sm inline-block"></span>
+                        <h2 class="font-display text-xl sm:text-2xl font-bold uppercase tracking-wide">
+                            Base de Dados Integrada — Google Sheets
+                        </h2>
+                    </div>
+                    <p class="text-xs text-creme/75 mt-1">
+                        Clique em <strong class="text-ambar">qualquer linha da tabela</strong> para abrir a <strong class="text-white underline">Ficha 360° do Cliente</strong> com os registros correlacionados de todas as abas.
+                    </p>
+                </div>
+
+                <!-- Botões de Ação Global da Tabela -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button 
+                        type="button" 
+                        onclick="exportarCSVAtivo()"
+                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-creme text-xs font-semibold transition-colors"
+                        title="Baixar aba atual em CSV"
+                    >
+                        <i data-lucide="download" class="w-3.5 h-3.5 text-ambar"></i>
+                        <span>Exportar CSV</span>
+                    </button>
+
+                    <button 
+                        type="button" 
+                        onclick="abrirModalRegistro()"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-trator hover:bg-tratorHover text-white text-xs sm:text-sm font-bold shadow-md transition-all"
+                    >
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>Novo Registro</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- NAVEGAÇÃO POR ABAS (CORRESPONDENTE ÀS ABAS DA PLANILHA) -->
+            <div class="bg-cremeEscuro/70 px-4 pt-3 border-b border-aco/15 flex flex-wrap items-center justify-between gap-3">
+                <div id="tabs-container" class="flex items-center gap-1.5 overflow-x-auto pb-0 custom-scrollbar">
+                    <!-- Abas geradas dinamicamente -->
+                </div>
+
+                <!-- Filtro Rápido por Cliente Vinculado -->
+                <div class="pb-2.5 flex items-center gap-2 w-full sm:w-auto">
+                    <div class="relative flex-1 sm:w-72">
+                        <i data-lucide="search" class="w-4 h-4 text-aco/50 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input 
+                            type="text" 
+                            id="input-busca" 
+                            oninput="filtrarTabela()"
+                            placeholder="Buscar cliente, CNPJ, produto, status..." 
+                            class="w-full pl-9 pr-8 py-2 rounded-xl bg-white border border-aco/20 text-xs sm:text-sm text-aco focus:outline-none focus:border-petroleo shadow-inner"
+                        >
+                        <button 
+                            type="button" 
+                            id="btn-limpar-busca"
+                            onclick="limparBusca()"
+                            class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-aco/50 hover:text-trator"
+                        >
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INFO BAR DA ABA ATIVA -->
+            <div class="bg-creme/60 px-5 py-2.5 border-b border-aco/10 flex flex-wrap items-center justify-between gap-2 text-xs text-aco/80">
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-petroleo uppercase" id="nome-aba-ativa">Carregando...</span>
+                    <span>•</span>
+                    <span id="contador-registros">0 registros encontrados</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="info-ultima-sync" class="text-aco/60 italic"></span>
+                    <a 
+                        id="link-planilha-externa"
+                        href="https://docs.google.com/spreadsheets/d/e/2PACX-1vRQDQFjFemHWo5bPZZs-QkhJ8IablJaAiMq-BrwQp7ePWVOWGjtRObOmqjIBpvelic0qaiKNAWcaurb/pubhtml" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-1 text-petroleo hover:text-trator font-semibold underline"
+                    >
+                        <span>Abrir Planilha Original</span>
+                        <i data-lucide="external-link" class="w-3 h-3"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- CONTAINER DA TABELA RESPONSIVA -->
+            <div class="overflow-x-auto custom-scrollbar min-h-[340px] relative">
+                <!-- Loader Overlay -->
+                <div id="loading-overlay" class="hidden absolute inset-0 bg-white/85 backdrop-blur-xs z-20 flex flex-col items-center justify-center p-6 text-center">
+                    <div class="w-12 h-12 rounded-2xl bg-trator text-white flex items-center justify-center shadow-lg mb-3 animate-bounce">
+                        <i data-lucide="refresh-cw" class="w-6 h-6 animate-spin"></i>
+                    </div>
+                    <p class="font-display text-lg font-bold uppercase text-aco">Lendo Abas da Planilha Google...</p>
+                    <p class="text-xs text-aco/70 mt-1 max-w-md">Correlacionando registros de clientes, cotações, faturamento e operações.</p>
+                </div>
+
+                <table class="w-full text-left border-collapse">
+                    <thead id="tabela-head" class="bg-petroleo text-white text-xs uppercase font-display tracking-wider">
+                        <!-- Cabeçalhos dinâmicos -->
+                    </thead>
+                    <tbody id="tabela-body" class="divide-y divide-aco/10 text-sm text-aco">
+                        <!-- Linhas dinâmicas -->
+                    </tbody>
+                </table>
+
+                <!-- Estado Vazio -->
+                <div id="empty-state" class="hidden py-14 px-6 text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-cremeEscuro text-aco/50 flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="folder-search" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold uppercase text-aco">Nenhum registro encontrado</h3>
+                    <p class="text-xs sm:text-sm text-aco/70 mt-1 max-w-md mx-auto">
+                        Não há dados correspondentes ao filtro atual nesta aba. Clique em "+ Novo Registro" para cadastrar.
+                    </p>
+                </div>
+            </div>
+
+            <!-- RODAPÉ DA TABELA -->
+            <div class="bg-cremeEscuro/60 px-5 py-3 border-t border-aco/15 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-aco/75">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-petroleo"></span>
+                    <span>Dica: Clique em qualquer linha para inspecionar o histórico completo do cliente em todas as abas.</span>
+                </div>
+                <div>
+                    <button 
+                        type="button" 
+                        onclick="resetarParaPlanilhaOriginal()" 
+                        class="text-trator hover:underline font-semibold"
+                    >
+                        Restaurar cache local para dados originais
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- 3. RODAPÉ (FOOTER) - MANTIDO FIELMENTE DO ORIGINAL                    -->
+    <!-- ===================================================================== -->
+    <footer class="bg-aco text-creme border-t-4 border-trator mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                
+                <!-- Identificação da Empresa -->
+                <div class="text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start gap-2 mb-1">
+                        <span class="w-3 h-3 rounded-sm bg-trator inline-block"></span>
+                        <span class="font-display text-xl font-bold uppercase tracking-wider text-white">
+                            BEMHES 2027
+                        </span>
+                    </div>
+                    <p class="text-sm text-creme/75">
+                        Lubrificantes e Manutenção Especializada — Linha Pesada, Agrícola e Industrial.
+                    </p>
+                </div>
+
+                <!-- Contatos Institucionais -->
+                <div class="flex flex-wrap justify-center md:justify-end gap-4 sm:gap-6 text-sm text-creme/80">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="phone" class="w-4 h-4 text-trator"></i>
+                        <span>Atendimento Técnico & Comercial</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-ambar"></i>
+                        <span>Qualidade Garantida</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Linha Inferior de Direitos Autorais -->
+            <div class="mt-6 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-creme/60 gap-2">
+                <p>&copy; <span id="ano-atual">2026</span> BEMHES 2027. Todos os direitos reservados.</p>
+                <p>Portal Administrativo v2.0 — Sincronização Relacional Google Sheets</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 1: FICHA 360° DO CLIENTE (CORRELAÇÃO ENTRE TODAS AS ABAS)       -->
+    <!-- ===================================================================== -->
+    <div id="modal-ficha-cliente" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/80 backdrop-blur-xs p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-creme border-2 border-aco rounded-2xl max-w-5xl w-full shadow-2xl overflow-hidden animate-modal my-auto max-h-[92vh] flex flex-col">
+            
+            <!-- Cabeçalho da Ficha 360° -->
+            <div class="bg-aco text-white px-6 py-5 border-b-4 border-trator flex items-start sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-xl bg-trator text-white flex items-center justify-center shadow-md flex-shrink-0">
+                        <i data-lucide="user-check" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-petroleo text-creme text-[11px] font-bold uppercase tracking-wider">
+                                Ficha 360° Correlacionada
+                            </span>
+                            <span id="ficha-cliente-id" class="text-xs font-mono text-ambar font-bold"></span>
+                        </div>
+                        <h3 id="ficha-cliente-nome" class="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-white mt-0.5">
+                            Nome do Cliente
+                        </h3>
+                        <p id="ficha-cliente-subtitulo" class="text-xs text-creme/75 mt-0.5">
+                            Visão unificada de todos os registros vinculados nas abas da planilha
+                        </p>
+                    </div>
+                </div>
+
+                <button type="button" onclick="fecharModalFicha()" class="p-2 rounded-xl bg-white/10 hover:bg-trator text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Resumo Numérico do Cliente -->
+            <div id="ficha-resumo-cards" class="bg-cremeEscuro px-6 py-3.5 border-b border-aco/15 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <!-- Preenchido via JS -->
+            </div>
+
+            <!-- Corpo Rolável com Todas as Abas Correlacionadas -->
+            <div id="ficha-conteudo-abas" class="p-6 overflow-y-auto custom-scrollbar space-y-6 flex-1">
+                <!-- Seções dinâmicas para cada aba da planilha -->
+            </div>
+
+            <!-- Rodapé do Modal Ficha 360° -->
+            <div class="bg-cremeEscuro px-6 py-4 border-t border-aco/15 flex flex-wrap items-center justify-between gap-3">
+                <div class="text-xs text-aco/70">
+                    Todos os dados acima foram cruzados automaticamente pelo identificador/nome do cliente.
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="fecharModalFicha()" class="px-5 py-2.5 rounded-xl bg-aco hover:bg-black text-white text-xs sm:text-sm font-bold transition-colors">
+                        Fechar Ficha
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 2: ADICIONAR / EDITAR REGISTRO (CRUD)                           -->
+    <!-- ===================================================================== -->
+    <div id="modal-registro" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/80 backdrop-blur-xs p-4 overflow-y-auto">
+        <div class="bg-creme border-2 border-aco rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden animate-modal my-auto">
+            
+            <!-- Cabeçalho -->
+            <div class="bg-petroleo text-white px-6 py-4 border-b-4 border-trator flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-lg bg-trator text-white flex items-center justify-center">
+                        <i data-lucide="file-edit" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 id="modal-registro-titulo" class="font-display text-xl font-bold uppercase">Novo Registro</h3>
+                        <p id="modal-registro-subtitulo" class="text-xs text-creme/80">Aba: Clientes</p>
+                    </div>
+                </div>
+                <button type="button" onclick="fecharModalRegistro()" class="p-2 rounded-lg hover:bg-white/10 text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Formulário Dinâmico -->
+            <form id="form-registro" onsubmit="salvarRegistro(event)" class="p-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
+                <!-- Seletor rápido de correlação de Cliente (quando não estiver na aba principal de Clientes) -->
+                <div id="box-correlacao-cliente" class="hidden mb-5 p-3.5 rounded-xl bg-petroleo/10 border border-petroleo/30">
+                    <label class="block text-xs font-bold uppercase text-petroleo mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="link-2" class="w-4 h-4 text-trator"></i>
+                        <span>Vincular a um Cliente Cadastrado (Correlação Automática)</span>
+                    </label>
+                    <select id="select-cliente-correlacao" onchange="aplicarClienteCorrelacionado(this.value)" class="w-full px-3 py-2 rounded-xl bg-white border border-aco/25 text-sm font-medium text-aco focus:outline-none focus:border-petroleo">
+                        <option value="">-- Selecione um cliente para preencher o vínculo --</option>
+                    </select>
+                </div>
+
+                <div id="campos-formulario" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Inputs gerados dinamicamente conforme as colunas da aba -->
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-aco/15 flex items-center justify-end gap-3">
+                    <button type="button" onclick="fecharModalRegistro()" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-aco/75 hover:bg-aco/10 transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-trator hover:bg-tratorHover text-white shadow-md transition-colors flex items-center gap-2">
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        <span>Salvar e Sincronizar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 3: CONFIRMAÇÃO DE EXCLUSÃO (SEM USO DE CONFIRM NATIVO)          -->
+    <!-- ===================================================================== -->
+    <div id="modal-excluir" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/80 backdrop-blur-xs p-4">
+        <div class="bg-creme border-2 border-aco rounded-2xl max-w-md w-full p-6 shadow-2xl animate-modal">
+            <div class="flex items-center gap-3 text-trator mb-3">
+                <div class="w-11 h-11 rounded-xl bg-trator/15 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="trash-2" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-display text-xl font-bold uppercase text-aco">Confirmar Exclusão</h3>
+                    <p class="text-xs text-aco/70">Esta ação removerá a linha selecionada.</p>
+                </div>
+            </div>
+            <p id="texto-confirmar-exclusao" class="text-sm text-aco/85 bg-white p-3.5 rounded-xl border border-aco/15 mb-5">
+                Deseja realmente excluir este registro?
+            </p>
+            <div class="flex items-center justify-end gap-3">
+                <button type="button" onclick="fecharModalExcluir()" class="px-4 py-2 rounded-xl text-sm font-semibold text-aco/75 hover:bg-aco/10">
+                    Cancelar
+                </button>
+                <button type="button" onclick="confirmarExclusao()" class="px-5 py-2 rounded-xl text-sm font-bold bg-red-600 hover:bg-red-700 text-white shadow-md flex items-center gap-1.5">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    <span>Excluir Linha</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 4: CONFIGURAÇÃO DA PLANILHA GOOGLE E APPS SCRIPT WEBHOOK        -->
+    <!-- ===================================================================== -->
+    <div id="modal-config" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/80 backdrop-blur-xs p-4 overflow-y-auto">
+        <div class="bg-creme border-2 border-aco rounded-2xl max-w-2xl w-full p-6 shadow-2xl animate-modal my-auto">
+            
+            <div class="flex items-center justify-between border-b border-aco/15 pb-4 mb-5">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-aco text-ambar flex items-center justify-center">
+                        <i data-lucide="database-zap" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-display text-xl font-bold uppercase text-aco">Integração Google Sheets</h3>
+                        <p class="text-xs text-aco/70">Leitura automática via PubHTML e gravação bidirecional via Apps Script</p>
+                    </div>
+                </div>
+                <button type="button" onclick="fecharModalConfig()" class="p-2 rounded-lg hover:bg-aco/10 text-aco">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form onsubmit="salvarConfiguracoes(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-petroleo mb-1">
+                        1. URL Pública da Planilha Google (pubhtml)
+                    </label>
+                    <input 
+                        type="url" 
+                        id="input-sheet-url" 
+                        required
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-aco/25 text-xs sm:text-sm focus:outline-none focus:border-petroleo"
+                    >
+                    <p class="text-[11px] text-aco/65 mt-1">
+                        O portal extrai automaticamente todas as abas e colunas desta URL publicada.
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-trator mb-1">
+                        2. URL do Google Apps Script Web App (Opcional — Gravação Real na Planilha)
+                    </label>
+                    <input 
+                        type="url" 
+                        id="input-webhook-url" 
+                        placeholder="https://script.google.com/macros/s/SEU_ID_SCRIPT/exec"
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-aco/25 text-xs sm:text-sm focus:outline-none focus:border-trator"
+                    >
+                    <p class="text-[11px] text-aco/65 mt-1">
+                        Como links <code class="bg-aco/10 px-1 rounded">/pubhtml</code> do Google são somente leitura por segurança, cole acima a URL do seu Web App do Google Apps Script para que adições, edições e exclusões gravem direto nas abas da planilha.
+                    </p>
+                </div>
+
+                <!-- Código Apps Script pronto para copiar -->
+                <div class="bg-aco text-creme rounded-xl p-4 border border-aco">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase text-ambar flex items-center gap-1.5">
+                            <i data-lucide="code-2" class="w-4 h-4"></i>
+                            <span>Código Google Apps Script (Cole em Extensões > Apps Script na sua Planilha)</span>
+                        </span>
+                        <button type="button" onclick="copiarCodigoAppsScript()" class="px-2.5 py-1 rounded bg-trator hover:bg-tratorHover text-white text-[11px] font-bold flex items-center gap-1">
+                            <i data-lucide="copy" class="w-3 h-3"></i>
+                            <span>Copiar Código</span>
+                        </button>
+                    </div>
+                    <textarea id="codigo-apps-script" readonly rows="6" class="w-full bg-black/50 text-creme/90 font-mono text-[11px] p-2.5 rounded-lg border border-white/10 focus:outline-none">function doPost(e) {
+  var data = JSON.parse(e.postData.contents);
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(data.aba) || ss.insertSheet(data.aba);
+  if (data.acao === 'adicionar') {
+    if (sheet.getLastRow() === 0) sheet.appendRow(data.colunas);
+    sheet.appendRow(data.colunas.map(function(c){ return data.registro[c] || ''; }));
+  } else if (data.acao === 'editar' && data.rowIndex >= 0) {
+    var rowNum = data.rowIndex + 2;
+    data.colunas.forEach(function(c, idx){ sheet.getRange(rowNum, idx + 1).setValue(data.registro[c] || ''); });
+  } else if (data.acao === 'excluir' && data.rowIndex >= 0) {
+    sheet.deleteRow(data.rowIndex + 2);
+  }
+  return ContentService.createTextOutput(JSON.stringify({status: 'ok'})).setMimeType(ContentService.MimeType.JSON);
+}</textarea>
+                </div>
+
+                <div class="pt-3 border-t border-aco/15 flex items-center justify-end gap-3">
+                    <button type="button" onclick="fecharModalConfig()" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-aco/75 hover:bg-aco/10">
+                        Fechar
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-petroleo hover:bg-petroleoHover text-white shadow-md flex items-center gap-2">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        <span>Salvar e Sincronizar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- TOAST DE NOTIFICAÇÕES (FEEDBACK VISUAL NÃO BLOQUEANTE)                -->
+    <!-- ===================================================================== -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- ===================================================================== -->
+    <!-- SCRIPTS DE INTEGRAÇÃO GOOGLE SHEETS, CORRELAÇÃO E CRUD                -->
+    <!-- ===================================================================== -->
+    <script>
+        // URL oficial da Planilha Google fornecida pelo usuário
+        const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRQDQFjFemHWo5bPZZs-QkhJ8IablJaAiMq-BrwQp7ePWVOWGjtRObOmqjIBpvelic0qaiKNAWcaurb/pubhtml";
+        const STORAGE_DATA_KEY = "bemhes_2027_sheets_data_v1";
+        const STORAGE_CONFIG_KEY = "bemhes_2027_sheets_config_v1";
+
+        // Estado Global da Aplicação
+        let state = {
+            sheetUrl: DEFAULT_SHEET_URL,
+            webhookUrl: "",
+            abas: [],            // Lista de nomes das abas: ["Clientes", "Cotações", ...]
+            abaAtiva: "",        // Nome da aba selecionada atualmente
+            dados: {},           // { "NomeAba": { colunas: [...], linhas: [ { ... }, ... ] } }
+            termoBusca: "",
+            fonteDados: "carregando", // "google-live" | "cache-local" | "estrutura-inicial"
+            ultimaSync: null,
+            editandoIndex: null, // null = novo, number = índice da linha editada
+            excluindoIndex: null
+        };
+
+        // =========================================================================
+        // 1. INICIALIZAÇÃO
+        // =========================================================================
+        window.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+
+            // Atualiza data e ano no cabeçalho e rodapé
+            document.getElementById('ano-atual').textContent = new Date().getFullYear();
+            const opcoesData = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dataFormatada = new Date().toLocaleDateString('pt-BR', opcoesData);
+            document.getElementById('data-atual').textContent = dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
+
+            // Carrega configurações salvas
+            carregarConfiguracoes();
+
+            // Tenta carregar do cache local primeiro para resposta instantânea, e em seguida sincroniza com Google Sheets
+            const temCache = carregarCacheLocal();
+            if (temCache) {
+                renderizarTudo();
+            }
+
+            // Busca os dados reais da URL da planilha do Google
+            await sincronizarPlanilhaGoogle(false);
+        });
+
+        function carregarConfiguracoes() {
+            try {
+                const cfg = JSON.parse(localStorage.getItem(STORAGE_CONFIG_KEY) || '{}');
+                if (cfg.sheetUrl) state.sheetUrl = cfg.sheetUrl;
+                if (cfg.webhookUrl) state.webhookUrl = cfg.webhookUrl;
+            } catch (e) {
+                console.warn("Erro ao ler configurações:", e);
+            }
+            document.getElementById('link-planilha-externa').href = state.sheetUrl;
+        }
+
+        function carregarCacheLocal() {
+            try {
+                const salvo = JSON.parse(localStorage.getItem(STORAGE_DATA_KEY) || 'null');
+                if (salvo && salvo.abas && salvo.abas.length > 0 && salvo.dados) {
+                    state.abas = salvo.abas;
+                    state.dados = salvo.dados;
+                    state.abaAtiva = salvo.abaAtiva || salvo.abas[0];
+                    state.ultimaSync = salvo.ultimaSync || null;
+                    state.fonteDados = "cache-local";
+                    return true;
+                }
+            } catch (e) {
+                console.warn("Cache local indisponível:", e);
+            }
+            return false;
+        }
+
+        function salvarCacheLocal() {
+            try {
+                localStorage.setItem(STORAGE_DATA_KEY, JSON.stringify({
+                    abas: state.abas,
+                    abaAtiva: state.abaAtiva,
+                    dados: state.dados,
+                    ultimaSync: state.ultimaSync
+                }));
+            } catch (e) {
+                console.warn("Erro ao salvar no localStorage:", e);
+            }
+        }
+
+        // =========================================================================
+        // 2. LEITURA E PARSE DA PLANILHA DO GOOGLE SHEETS (PUBHTML / CORS FALLBACK)
+        // =========================================================================
+        async function sincronizarPlanilhaGoogle(mostrarNotificacao = true) {
+            const loader = document.getElementById('loading-overlay');
+            const iconSync = document.getElementById('icon-sync');
+            loader.classList.remove('hidden');
+            iconSync.classList.add('animate-spin');
+
+            try {
+                const htmlPlanilha = await buscarHtmlComFallback(state.sheetUrl);
+                const parsed = parseGooglePubHtml(htmlPlanilha);
+
+                if (parsed && parsed.abas.length > 0) {
+                    state.abas = parsed.abas;
+                    state.dados = parsed.dados;
+                    if (!state.abaAtiva || !state.abas.includes(state.abaAtiva)) {
+                        state.abaAtiva = state.abas[0];
+                    }
+                    state.fonteDados = "google-live";
+                    state.ultimaSync = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    salvarCacheLocal();
+                    renderizarTudo();
+                    if (mostrarNotificacao) {
+                        mostrarToast(`Planilha sincronizada com sucesso! (${state.abas.length} aba(s) carregada(s))`, "success");
+                    }
+                } else {
+                    throw new Error("Nenhuma tabela encontrada no HTML publicado da planilha.");
+                }
+            } catch (erro) {
+                console.warn("Aviso na leitura direta da planilha Google:", erro);
+                // Se não houver nenhum dado em cache, carrega a base relacional estruturada para operação imediata
+                if (state.abas.length === 0) {
+                    carregarBaseRelacionalPadrao();
+                    renderizarTudo();
+                } else {
+                    atualizarStatusConexao();
+                }
+                if (mostrarNotificacao) {
+                    mostrarToast("Não foi possível acessar a planilha online no momento (CORS/Rede). Exibindo dados locais.", "warning");
+                }
+            } finally {
+                loader.classList.add('hidden');
+                iconSync.classList.remove('animate-spin');
+            }
+        }
+
+        // Tenta buscar diretamente e usa proxies públicos seguros caso o navegador bloqueie CORS
+        async function buscarHtmlComFallback(url) {
+            const cacheBuster = (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
+            const targetUrl = url + cacheBuster;
+
+            const tentativas = [
+                () => fetch(targetUrl).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); }),
+                () => fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`)
+                        .then(r => r.json())
+                        .then(d => { if (!d.contents) throw new Error("AllOrigins vazio"); return d.contents; }),
+                () => fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`)
+                        .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+            ];
+
+            for (const tentativa of tentativas) {
+                try {
+                    const html = await tentativa();
+                    if (html && (html.includes('<table') || html.includes('ritz'))) {
+                        return html;
+                    }
+                } catch (e) {
+                    // Tenta o próximo método
+                }
+            }
+            throw new Error("Todas as tentativas de leitura da planilha falharam.");
+        }
+
+        // Faz o parse completo do documento pubhtml do Google Sheets (detectando abas e tabelas)
+        function parseGooglePubHtml(htmlString) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlString, 'text/html');
+
+            // 1. Extrair nomes das abas no menu superior do Google Sheets (#sheet-menu li)
+            const menuItems = Array.from(doc.querySelectorAll('#sheet-menu li'));
+            const nomesAbasMenu = menuItems.map(li => li.textContent.trim()).filter(Boolean);
+
+            // 2. Extrair todas as tabelas de dados (.waffle)
+            const tabelas = Array.from(doc.querySelectorAll('table.waffle'));
+            if (tabelas.length === 0) {
+                // Fallback para qualquer table caso a classe mude
+                const todasTabelas = Array.from(doc.querySelectorAll('table'));
+                if (todasTabelas.length > 0) tabelas.push(...todasTabelas);
+            }
+
+            const abasDetectadas = [];
+            const dadosExtraidos = {};
+
+            tabelas.forEach((tabela, idx) => {
+                // Descobre o nome da aba correspondente
+                let nomeAba = nomesAbasMenu[idx];
+                if (!nomeAba) {
+                    // Tenta pegar pelo container pai (id numérico do gid)
+                    const containerPai = tabela.closest('[id]');
+                    if (containerPai && containerPai.id) {
+                        const linkAba = doc.querySelector(`#sheet-button-${containerPai.id}`);
+                        if (linkAba) nomeAba = linkAba.textContent.trim();
+                    }
+                }
+                if (!nomeAba) nomeAba = `Aba ${idx + 1}`;
+
+                // Evita duplicatas de nome
+                if (dadosExtraidos[nomeAba]) {
+                    nomeAba = `${nomeAba} (${idx + 1})`;
+                }
+
+                // Extrai linhas da tabela
+                const trs = Array.from(tabela.querySelectorAll('tbody tr'));
+                const matriz = [];
+
+                trs.forEach(tr => {
+                    // Ignora linhas de cabeçalho numérico da grade do Google (row-header-shim)
+                    const tds = Array.from(tr.querySelectorAll('td'));
+                    if (tds.length === 0) return;
+
+                    const valoresLinha = tds.map(td => td.textContent.replace(/\u00a0/g, ' ').trim());
+                    // Verifica se a linha tem algum conteúdo não vazio
+                    if (valoresLinha.some(v => v !== '')) {
+                        matriz.push(valoresLinha);
+                    }
+                });
+
+                if (matriz.length > 0) {
+                    // Primeira linha não-vazia vira o cabeçalho das colunas
+                    let rawHeaders = matriz[0];
+                    // Remove colunas totalmente vazias no final
+                    while (rawHeaders.length > 0 && rawHeaders[rawHeaders.length - 1] === '') {
+                        rawHeaders.pop();
+                    }
+
+                    const colunas = rawHeaders.map((h, colIdx) => h || `Coluna ${colIdx + 1}`);
+                    const linhas = [];
+
+                    for (let r = 1; r < matriz.length; r++) {
+                        const rowArr = matriz[r];
+                        const objLinha = {};
+                        let temValor = false;
+
+                        colunas.forEach((colNome, cIdx) => {
+                            const val = (rowArr[cIdx] !== undefined) ? rowArr[cIdx] : '';
+                            objLinha[colNome] = val;
+                            if (val !== '') temValor = true;
+                        });
+
+                        if (temValor) {
+                            linhas.push(objLinha);
+                        }
+                    }
+
+                    abasDetectadas.push(nomeAba);
+                    dadosExtraidos[nomeAba] = {
+                        colunas: colunas,
+                        linhas: linhas
+                    };
+                }
+            });
+
+            return { abas: abasDetectadas, dados: dadosExtraidos };
+        }
+
+        // Base relacional de fallback caso o navegador esteja offline ou a planilha pública vazia
+        function carregarBaseRelacionalPadrao() {
+            state.abas = ["Clientes", "Cotações", "Faturamento", "Frota & Equipamentos"];
+            state.abaAtiva = "Clientes";
+            state.fonteDados = "estrutura-inicial";
+            state.ultimaSync = "Modo Offline / Local";
+            state.dados = {
+                "Clientes": {
+                    colunas: ["ID Cliente", "Cliente / Razão Social", "CNPJ / CPF", "Segmento", "Cidade / UF", "Contato", "Telefone", "Status"],
+                    linhas: [
+                        { "ID Cliente": "CLI-001", "Cliente / Razão Social": "Agropecuária Santa Fé Ltda", "CNPJ / CPF": "12.345.678/0001-90", "Segmento": "Agrícola", "Cidade / UF": "Ribeirão Preto / SP", "Contato": "Carlos Mendes", "Telefone": "(16) 99123-4567", "Status": "Ativo" },
+                        { "ID Cliente": "CLI-002", "Cliente / Razão Social": "Transportadora Rodoviária Express", "CNPJ / CPF": "23.456.789/0001-12", "Segmento": "Linha Pesada", "Cidade / UF": "Uberlândia / MG", "Contato": "Fernanda Souza", "Telefone": "(34) 99876-5432", "Status": "Ativo" },
+                        { "ID Cliente": "CLI-003", "Cliente / Razão Social": "Metalúrgica Aço Forte S.A.", "CNPJ / CPF": "34.567.890/0001-45", "Segmento": "Industrial", "Cidade / UF": "Sorocaba / SP", "Contato": "Roberto Almeida", "Telefone": "(15) 99741-8520", "Status": "Ativo" },
+                        { "ID Cliente": "CLI-004", "Cliente / Razão Social": "Terraplenagem & Mineração Vale Verde", "CNPJ / CPF": "45.678.901/0001-78", "Segmento": "Linha Amarela", "Cidade / UF": "Goiânia / GO", "Contato": "Marcos Oliveira", "Telefone": "(62) 99632-1478", "Status": "Em Negociação" }
+                    ]
+                },
+                "Cotações": {
+                    colunas: ["Nº Cotação", "ID Cliente", "Cliente / Razão Social", "Data", "Produto / Lubrificante", "Quantidade", "Valor Total", "Status Cotação"],
+                    linhas: [
+                        { "Nº Cotação": "COT-2027-01", "ID Cliente": "CLI-001", "Cliente / Razão Social": "Agropecuária Santa Fé Ltda", "Data": "18/11/2026", "Produto / Lubrificante": "Graxa Lítio EP2 Balde 20kg + Óleo 15W40", "Quantidade": "15 Baldes", "Valor Total": "R$ 8.450,00", "Status Cotação": "Aprovada" },
+                        { "Nº Cotação": "COT-2027-02", "ID Cliente": "CLI-002", "Cliente / Razão Social": "Transportadora Rodoviária Express", "Data": "20/11/2026", "Produto / Lubrificante": "Óleo Diesel Sintético 10W40 Tambor 200L", "Quantidade": "4 Tambores", "Valor Total": "R$ 19.200,00", "Status Cotação": "Aprovada" },
+                        { "Nº Cotação": "COT-2027-03", "ID Cliente": "CLI-003", "Cliente / Razão Social": "Metalúrgica Aço Forte S.A.", "Data": "22/11/2026", "Produto / Lubrificante": "Óleo Hidráulico ISO VG 68 Tambor 200L", "Quantidade": "6 Tambores", "Valor Total": "R$ 14.700,00", "Status Cotação": "Aguardando" },
+                        { "Nº Cotação": "COT-2027-04", "ID Cliente": "CLI-001", "Cliente / Razão Social": "Agropecuária Santa Fé Ltda", "Data": "24/11/2026", "Produto / Lubrificante": "Kit Filtros Colheitadeira + Fluido Transmissão", "Quantidade": "8 Kits", "Valor Total": "R$ 6.120,00", "Status Cotação": "Enviada" }
+                    ]
+                },
+                "Faturamento": {
+                    colunas: ["Nº NF-e", "ID Cliente", "Cliente / Razão Social", "Data Emissão", "Vencimento", "Valor Faturado", "Forma Pagamento", "Situação"],
+                    linhas: [
+                        { "Nº NF-e": "NF-004512", "ID Cliente": "CLI-001", "Cliente / Razão Social": "Agropecuária Santa Fé Ltda", "Data Emissão": "19/11/2026", "Vencimento": "19/12/2026", "Valor Faturado": "R$ 8.450,00", "Forma Pagamento": "Boleto 30 dias", "Situação": "Pago" },
+                        { "Nº NF-e": "NF-004518", "ID Cliente": "CLI-002", "Cliente / Razão Social": "Transportadora Rodoviária Express", "Data Emissão": "21/11/2026", "Vencimento": "21/12/2026", "Valor Faturado": "R$ 19.200,00", "Forma Pagamento": "Boleto 28/56 dias", "Situação": "Em Aberto" },
+                        { "Nº NF-e": "NF-004525", "ID Cliente": "CLI-004", "Cliente / Razão Social": "Terraplenagem & Mineração Vale Verde", "Data Emissão": "10/11/2026", "Vencimento": "10/12/2026", "Valor Faturado": "R$ 11.300,00", "Forma Pagamento": "PIX Faturado", "Situação": "Pago" }
+                    ]
+                },
+                "Frota & Equipamentos": {
+                    colunas: ["ID Frota", "ID Cliente", "Cliente / Razão Social", "Equipamento / Veículo", "Modelo", "Lubrificante Recomendado", "Próxima Troca"],
+                    linhas: [
+                        { "ID Frota": "FRT-101", "ID Cliente": "CLI-001", "Cliente / Razão Social": "Agropecuária Santa Fé Ltda", "Equipamento / Veículo": "Trator Pesado 4x4", "Modelo": "John Deere 8R 370", "Lubrificante Recomendado": "Óleo 15W40 CK-4 + Graxa EP2", "Próxima Troca": "500 horas" },
+                        { "ID Frota": "FRT-102", "ID Cliente": "CLI-002", "Cliente / Razão Social": "Transportadora Rodoviária Express", "Equipamento / Veículo": "Cavalo Mecânico", "Modelo": "Scania R450 Highline", "Lubrificante Recomendado": "Sintético 10W40 Ultra", "Próxima Troca": "40.000 km" },
+                        { "ID Frota": "FRT-103", "ID Cliente": "CLI-003", "Cliente / Razão Social": "Metalúrgica Aço Forte S.A.", "Equipamento / Veículo": "Prensa Hidráulica 500T", "Modelo": "Prensa Industrial PH-500", "Lubrificante Recomendado": "Hidráulico ISO VG 68 AW", "Próxima Troca": "2.000 horas" }
+                    ]
+                }
+            };
+            salvarCacheLocal();
+        }
+
+        // =========================================================================
+        // 3. RENDERIZAÇÃO DA INTERFACE (KPIS, ABAS E TABELA)
+        // =========================================================================
+        function renderizarTudo() {
+            atualizarStatusConexao();
+            renderizarKPIs();
+            renderizarAbas();
+            renderizarTabela();
+            lucide.createIcons();
+        }
+
+        function atualizarStatusConexao() {
+            const texto = document.getElementById('texto-conexao');
+            const dot = document.getElementById('status-dot');
+            const infoSync = document.getElementById('info-ultima-sync');
+
+            if (state.fonteDados === "google-live") {
+                texto.textContent = "Google Sheets Conectado";
+                dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
+            } else if (state.fonteDados === "cache-local") {
+                texto.textContent = "Sincronizado (Local + Google)";
+                dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-ambar animate-pulse";
+            } else {
+                texto.textContent = "Base Local Ativa";
+                dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-ambar";
+            }
+
+            infoSync.textContent = state.ultimaSync ? `Última atualização: ${state.ultimaSync}` : "";
+        }
+
+        function renderizarKPIs() {
+            const container = document.getElementById('kpi-container');
+            const totalAbas = state.abas.length;
+            let totalRegistros = 0;
+            state.abas.forEach(aba => {
+                totalRegistros += (state.dados[aba]?.linhas?.length || 0);
+            });
+
+            // Identifica clientes únicos cruzando todas as abas
+            const clientesUnicos = obterListaClientesUnicos();
+
+            // Soma valores monetários encontrados nas abas
+            let somaFinanceira = 0;
+            state.abas.forEach(aba => {
+                const linhas = state.dados[aba]?.linhas || [];
+                linhas.forEach(linha => {
+                    Object.entries(linha).forEach(([col, val]) => {
+                        if (/valor|total|faturado|preço|preco/i.test(col) && typeof val === 'string') {
+                            const num = parseFloat(val.replace(/[^\d,-]/g, '').replace('.', '').replace(',', '.'));
+                            if (!isNaN(num)) somaFinanceira += num;
+                        }
+                    });
+                });
+            });
+
+            const valorFormatado = somaFinanceira.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+            container.innerHTML = `
+                <div class="card-industrial bg-white rounded-2xl p-5 shadow-md border-2 border-aco/15 border-b-petroleo flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-aco/60">Clientes Correlacionados</span>
+                        <p class="font-display text-3xl font-bold text-petroleo mt-1">${clientesUnicos.length}</p>
+                        <span class="text-[11px] text-aco/60">Cruzados entre ${totalAbas} aba(s)</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-petroleo/10 text-petroleo flex items-center justify-center">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="card-industrial bg-white rounded-2xl p-5 shadow-md border-2 border-aco/15 border-b-trator flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-aco/60">Abas da Planilha</span>
+                        <p class="font-display text-3xl font-bold text-trator mt-1">${totalAbas}</p>
+                        <span class="text-[11px] text-aco/60 truncate max-w-[160px] block">${state.abas.join(', ')}</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-trator/10 text-trator flex items-center justify-center">
+                        <i data-lucide="layers" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="card-industrial bg-white rounded-2xl p-5 shadow-md border-2 border-aco/15 border-b-ambar flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-aco/60">Total de Linhas</span>
+                        <p class="font-display text-3xl font-bold text-aco mt-1">${totalRegistros}</p>
+                        <span class="text-[11px] text-aco/60">Editáveis e sincronizáveis</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-ambar/15 text-amber-700 flex items-center justify-center">
+                        <i data-lucide="table-2" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="card-industrial bg-white rounded-2xl p-5 shadow-md border-2 border-aco/15 border-b-aco flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-aco/60">Volume Mapeado</span>
+                        <p class="font-display text-2xl sm:text-3xl font-bold text-aco mt-1">${somaFinanceira > 0 ? valorFormatado : totalRegistros + ' Itens'}</p>
+                        <span class="text-[11px] text-aco/60">Soma das abas financeiras</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-aco text-ambar flex items-center justify-center">
+                        <i data-lucide="trending-up" class="w-6 h-6"></i>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderizarAbas() {
+            const container = document.getElementById('tabs-container');
+            container.innerHTML = state.abas.map((aba, index) => {
+                const ativa = aba === state.abaAtiva;
+                const qtd = state.dados[aba]?.linhas?.length || 0;
+                const classesAtiva = ativa
+                    ? "bg-white text-trator border-t-2 border-x-2 border-aco/15 border-b-white font-bold shadow-xs -mb-px"
+                    : "bg-creme/60 hover:bg-white/80 text-aco/75 hover:text-petroleo border border-transparent";
+
+                return `
+                    <button 
+                        type="button" 
+                        onclick="selecionarAba('${aba.replace(/'/g, "\\'")}')"
+                        class="px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-display uppercase tracking-wide flex items-center gap-2 transition-all whitespace-nowrap ${classesAtiva}"
+                    >
+                        <span class="text-[10px] px-1.5 py-0.5 rounded ${ativa ? 'bg-trator text-white' : 'bg-aco/10 text-aco/70'}">0${index + 1}</span>
+                        <span>${aba}</span>
+                        <span class="text-[11px] font-sans font-semibold px-2 py-0.5 rounded-full ${ativa ? 'bg-petroleo text-white' : 'bg-aco/10 text-aco/70'}">${qtd}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selecionarAba(nomeAba) {
+            state.abaAtiva = nomeAba;
+            salvarCacheLocal();
+            renderizarAbas();
+            renderizarTabela();
+            lucide.createIcons();
+        }
+
+        function filtrarTabela() {
+            const input = document.getElementById('input-busca');
+            const btnLimpar = document.getElementById('btn-limpar-busca');
+            state.termoBusca = input.value.trim().toLowerCase();
+
+            if (state.termoBusca) {
+                btnLimpar.classList.remove('hidden');
+            } else {
+                btnLimpar.classList.add('hidden');
+            }
+
+            renderizarTabela();
+            lucide.createIcons();
+        }
+
+        function limparBusca() {
+            document.getElementById('input-busca').value = '';
+            state.termoBusca = '';
+            document.getElementById('btn-limpar-busca').classList.add('hidden');
+            renderizarTabela();
+            lucide.createIcons();
+        }
+
+        function renderizarTabela() {
+            const abaObj = state.dados[state.abaAtiva];
+            const thead = document.getElementById('tabela-head');
+            const tbody = document.getElementById('tabela-body');
+            const emptyState = document.getElementById('empty-state');
+            const nomeAbaLabel = document.getElementById('nome-aba-ativa');
+            const contadorLabel = document.getElementById('contador-registros');
+
+            if (!abaObj) return;
+
+            nomeAbaLabel.textContent = `Aba: ${state.abaAtiva}`;
+            const colunas = abaObj.colunas;
+            const todasLinhas = abaObj.linhas;
+
+            // Filtra mantendo o índice original da linha para edição/exclusão precisa
+            const linhasFiltradas = todasLinhas
+                .map((linha, originalIndex) => ({ linha, originalIndex }))
+                .filter(({ linha }) => {
+                    if (!state.termoBusca) return true;
+                    return Object.values(linha).some(val =>
+                        String(val).toLowerCase().includes(state.termoBusca)
+                    );
+                });
+
+            contadorLabel.textContent = `${linhasFiltradas.length} registro(s) exibido(s)`;
+
+            // Renderiza Cabeçalho
+            thead.innerHTML = `
+                <tr>
+                    <th class="py-3.5 px-4 w-12 text-center">#</th>
+                    ${colunas.map(col => `<th class="py-3.5 px-4 whitespace-nowrap">${escapeHtml(col)}</th>`).join('')}
+                    <th class="py-3.5 px-4 text-right whitespace-nowrap">Ações</th>
+                </tr>
+            `;
+
+            if (linhasFiltradas.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            // Renderiza Linhas
+            tbody.innerHTML = linhasFiltradas.map(({ linha, originalIndex }, idxVisivel) => {
+                const celulas = colunas.map(col => {
+                    const valor = linha[col] || '';
+                    return `<td class="py-3.5 px-4 whitespace-nowrap max-w-xs truncate" title="${escapeHtml(valor)}">${formatarCelula(col, valor)}</td>`;
+                }).join('');
+
+                return `
+                    <tr 
+                        onclick="abrirFichaClientePorLinha(${originalIndex})"
+                        class="group hover:bg-ambar/15 cursor-pointer transition-colors"
+                        title="Clique para abrir a Ficha 360° completa deste cliente em todas as abas"
+                    >
+                        <td class="py-3.5 px-4 text-center font-mono text-xs text-aco/50 font-bold group-hover:text-trator">
+                            ${idxVisivel + 1}
+                        </td>
+                        ${celulas}
+                        <td class="py-3.5 px-4 text-right whitespace-nowrap" onclick="event.stopPropagation()">
+                            <div class="inline-flex items-center gap-1.5">
+                                <button 
+                                    type="button" 
+                                    onclick="abrirFichaClientePorLinha(${originalIndex})"
+                                    class="p-1.5 rounded-lg bg-petroleo/10 hover:bg-petroleo text-petroleo hover:text-white transition-colors"
+                                    title="Ver Ficha 360° do Cliente"
+                                >
+                                    <i data-lucide="eye" class="w-4 h-4"></i>
+                                </button>
+                                <button 
+                                    type="button" 
+                                    onclick="abrirModalRegistro(${originalIndex})"
+                                    class="p-1.5 rounded-lg bg-ambar/20 hover:bg-ambar text-amber-800 hover:text-white transition-colors"
+                                    title="Editar Linha"
+                                >
+                                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                                </button>
+                                <button 
+                                    type="button" 
+                                    onclick="abrirModalExcluir(${originalIndex})"
+                                    class="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-600 text-red-600 hover:text-white transition-colors"
+                                    title="Excluir Linha"
+                                >
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Formatação visual inteligente para badges de status e valores
+        function formatarCelula(coluna, valor) {
+            if (!valor) return '<span class="text-aco/30 italic">—</span>';
+            const texto = escapeHtml(valor);
+
+            if (/status|situação|situacao/i.test(coluna)) {
+                const v = valor.toLowerCase();
+                let cor = "bg-aco/10 text-aco";
+                if (v.includes('ativo') || v.includes('aprovad') || v.includes('pago') || v.includes('conclu')) {
+                    cor = "bg-emerald-100 text-emerald-800 border border-emerald-300";
+                } else if (v.includes('aberto') || v.includes('aguardando') || v.includes('negocia') || v.includes('enviad')) {
+                    cor = "bg-amber-100 text-amber-800 border border-amber-300";
+                } else if (v.includes('cancel') || v.includes('atras') || v.includes('inativo')) {
+                    cor = "bg-red-100 text-red-800 border border-red-300";
+                }
+                return `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${cor}">${texto}</span>`;
+            }
+
+            if (/id cliente|código|codigo|cotação|cotacao|nf-e|nfe/i.test(coluna)) {
+                return `<span class="font-mono text-xs font-bold text-petroleo bg-petroleo/10 px-2 py-0.5 rounded">${texto}</span>`;
+            }
+
+            if (/valor|total|faturado/i.test(coluna)) {
+                return `<span class="font-semibold text-aco">${texto}</span>`;
+            }
+
+            return texto;
+        }
+
+        // =========================================================================
+        // 4. LÓGICA DE CORRELAÇÃO ENTRE ABAS E FICHA 360° DO CLIENTE
+        // =========================================================================
+        function identificarChavesCliente(linha) {
+            let idCliente = "";
+            let nomeCliente = "";
+            let cnpjCliente = "";
+
+            Object.entries(linha).forEach(([col, val]) => {
+                const c = col.toLowerCase();
+                const v = String(val || "").trim();
+                if (!v) return;
+
+                if (!idCliente && (c.includes('id cliente') || c === 'id' || c.includes('cod_cliente') || c.includes('código cliente'))) {
+                    idCliente = v;
+                } else if (!nomeCliente && (c.includes('cliente') || c.includes('razão') || c.includes('razao') || c.includes('empresa') || c.includes('nome'))) {
+                    nomeCliente = v;
+                } else if (!cnpjCliente && (c.includes('cnpj') || c.includes('cpf') || c.includes('documento'))) {
+                    cnpjCliente = v;
+                }
+            });
+
+            // Fallback se a planilha tiver colunas genéricas (usa a primeira coluna de texto como identificador)
+            if (!idCliente && !nomeCliente) {
+                const valores = Object.values(linha).map(v => String(v || "").trim()).filter(Boolean);
+                if (valores.length > 0) {
+                    nomeCliente = valores[0];
+                }
+            }
+
+            return { idCliente, nomeCliente, cnpjCliente };
+        }
+
+        function obterListaClientesUnicos() {
+            const mapa = new Map();
+
+            state.abas.forEach(aba => {
+                const linhas = state.dados[aba]?.linhas || [];
+                linhas.forEach(linha => {
+                    const { idCliente, nomeCliente, cnpjCliente } = identificarChavesCliente(linha);
+                    const chave = (idCliente || nomeCliente || cnpjCliente).toLowerCase();
+                    if (chave && !mapa.has(chave)) {
+                        mapa.set(chave, {
+                            id: idCliente,
+                            nome: nomeCliente || idCliente || cnpjCliente,
+                            cnpj: cnpjCliente
+                        });
+                    }
+                });
+            });
+
+            return Array.from(mapa.values());
+        }
+
+        function abrirFichaClientePorLinha(rowIndex) {
+            const abaObj = state.dados[state.abaAtiva];
+            if (!abaObj || !abaObj.linhas[rowIndex]) return;
+
+            const linhaClicada = abaObj.linhas[rowIndex];
+            const chaves = identificarChavesCliente(linhaClicada);
+
+            const tituloNome = chaves.nomeCliente || chaves.idCliente || "Registro Selecionado";
+            document.getElementById('ficha-cliente-nome').textContent = tituloNome;
+            document.getElementById('ficha-cliente-id').textContent = chaves.idCliente ? `ID: ${chaves.idCliente}` : (chaves.cnpjCliente ? `DOC: ${chaves.cnpjCliente}` : `Origem: ${state.abaAtiva}`);
+
+            // Busca todas as linhas correlacionadas em TODAS as abas
+            const resultadosPorAba = {};
+            let totalOcorrencias = 0;
+
+            state.abas.forEach(nomeAba => {
+                const linhasAba = state.dados[nomeAba]?.linhas || [];
+                const correspondentes = linhasAba.filter((item, idx) => {
+                    // Se for exatamente a linha clicada na aba ativa, inclui
+                    if (nomeAba === state.abaAtiva && idx === rowIndex) return true;
+
+                    const chavesItem = identificarChavesCliente(item);
+
+                    // Compara por ID Cliente
+                    if (chaves.idCliente && chavesItem.idCliente &&
+                        chaves.idCliente.toLowerCase() === chavesItem.idCliente.toLowerCase()) {
+                        return true;
+                    }
+
+                    // Compara por CNPJ/CPF
+                    if (chaves.cnpjCliente && chavesItem.cnpjCliente &&
+                        chaves.cnpjCliente.replace(/\D/g, '') === chavesItem.cnpjCliente.replace(/\D/g, '')) {
+                        return true;
+                    }
+
+                    // Compara por Nome / Razão Social
+                    if (chaves.nomeCliente && chavesItem.nomeCliente &&
+                        chaves.nomeCliente.toLowerCase() === chavesItem.nomeCliente.toLowerCase()) {
+                        return true;
+                    }
+
+                    // Busca textual cruzada caso o nome ou ID apareça em qualquer coluna da outra aba
+                    const termoPrincipal = (chaves.idCliente || chaves.nomeCliente).toLowerCase();
+                    if (termoPrincipal && termoPrincipal.length >= 3) {
+                        return Object.values(item).some(val => String(val).toLowerCase() === termoPrincipal);
+                    }
+
+                    return false;
+                });
+
+                resultadosPorAba[nomeAba] = correspondentes;
+                totalOcorrencias += correspondentes.length;
+            });
+
+            // Preenche cards de resumo no topo da Ficha 360°
+            const resumoContainer = document.getElementById('ficha-resumo-cards');
+            resumoContainer.innerHTML = state.abas.slice(0, 4).map(aba => {
+                const qtd = resultadosPorAba[aba]?.length || 0;
+                return `
+                    <div class="bg-white rounded-xl p-3 border border-aco/15 shadow-xs">
+                        <span class="text-[11px] font-bold uppercase text-aco/60 block truncate">${escapeHtml(aba)}</span>
+                        <span class="font-display text-2xl font-bold ${qtd > 0 ? 'text-petroleo' : 'text-aco/30'}">${qtd}</span>
+                        <span class="text-[11px] text-aco/60 ml-1">registro(s)</span>
+                    </div>
+                `;
+            }).join('');
+
+            // Renderiza o conteúdo detalhado de cada aba dentro do modal
+            const conteudoContainer = document.getElementById('ficha-conteudo-abas');
+            conteudoContainer.innerHTML = state.abas.map(nomeAba => {
+                const colunas = state.dados[nomeAba]?.colunas || [];
+                const itens = resultadosPorAba[nomeAba] || [];
+
+                return `
+                    <div class="bg-white rounded-2xl border-2 border-aco/15 overflow-hidden shadow-sm">
+                        <div class="bg-petroleo/10 px-4 py-3 border-b border-aco/10 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full ${itens.length > 0 ? 'bg-trator' : 'bg-aco/30'}"></span>
+                                <h4 class="font-display text-base sm:text-lg font-bold uppercase text-petroleo">
+                                    ${escapeHtml(nomeAba)}
+                                </h4>
+                                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-petroleo text-white">
+                                    ${itens.length}
+                                </span>
+                            </div>
+
+                            <button 
+                                type="button" 
+                                onclick="adicionarRegistroParaClienteNaAba('${nomeAba.replace(/'/g, "\\'")}', '${escapeHtml(chaves.idCliente).replace(/'/g, "\\'")}', '${escapeHtml(chaves.nomeCliente).replace(/'/g, "\\'")}')"
+                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-trator hover:bg-tratorHover text-white text-xs font-bold transition-colors"
+                            >
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                <span>Adicionar em ${escapeHtml(nomeAba)}</span>
+                            </button>
+                        </div>
+
+                        ${itens.length === 0 ? `
+                            <div class="p-4 text-xs text-aco/60 italic">
+                                Nenhum registro vinculado a este cliente encontrado na aba "${escapeHtml(nomeAba)}".
+                            </div>
+                        ` : `
+                            <div class="overflow-x-auto custom-scrollbar">
+                                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                                    <thead class="bg-cremeEscuro text-aco font-display uppercase text-xs">
+                                        <tr>
+                                            ${colunas.map(c => `<th class="py-2.5 px-3.5 whitespace-nowrap">${escapeHtml(c)}</th>`).join('')}
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-aco/10">
+                                        ${itens.map(item => `
+                                            <tr class="hover:bg-creme/50">
+                                                ${colunas.map(c => `<td class="py-2.5 px-3.5 whitespace-nowrap">${formatarCelula(c, item[c])}</td>`).join('')}
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `}
+                    </div>
+                `;
+            }).join('');
+
+            const modal = document.getElementById('modal-ficha-cliente');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function fecharModalFicha() {
+            const modal = document.getElementById('modal-ficha-cliente');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function adicionarRegistroParaClienteNaAba(nomeAba, idCliente, nomeCliente) {
+            fecharModalFicha();
+            selecionarAba(nomeAba);
+            abrirModalRegistro(null, { idCliente, nomeCliente });
+        }
+
+        // =========================================================================
+        // 5. CRUD COMPLETO (ADICIONAR, EDITAR E EXCLUIR LINHAS)
+        // =========================================================================
+        function abrirModalRegistro(rowIndex = null, prefillCliente = null) {
+            state.editandoIndex = rowIndex;
+            const abaObj = state.dados[state.abaAtiva];
+            if (!abaObj) return;
+
+            const isEdicao = rowIndex !== null;
+            const registroAtual = isEdicao ? abaObj.linhas[rowIndex] : {};
+
+            document.getElementById('modal-registro-titulo').textContent = isEdicao ? "Editar Registro" : "Novo Registro";
+            document.getElementById('modal-registro-subtitulo').textContent = `Aba selecionada: ${state.abaAtiva}`;
+
+            // Preenche seletor de clientes correlacionados
+            const boxCorrelacao = document.getElementById('box-correlacao-cliente');
+            const selectCliente = document.getElementById('select-cliente-correlacao');
+            const clientes = obterListaClientesUnicos();
+
+            if (clientes.length > 0 && !/cliente/i.test(state.abaAtiva)) {
+                boxCorrelacao.classList.remove('hidden');
+                selectCliente.innerHTML = `<option value="">-- Selecione um cliente cadastrado para vincular --</option>` +
+                    clientes.map((cli, i) => `<option value="${i}">${escapeHtml(cli.id ? cli.id + ' - ' : '')}${escapeHtml(cli.nome)}</option>`).join('');
+            } else {
+                boxCorrelacao.classList.add('hidden');
+            }
+
+            // Gera os campos dinâmicos baseados nas colunas da aba
+            const camposContainer = document.getElementById('campos-formulario');
+            camposContainer.innerHTML = abaObj.colunas.map((col, idx) => {
+                let valorInicial = isEdicao ? (registroAtual[col] || '') : '';
+
+                // Pré-preenchimento se vier da Ficha 360° do Cliente
+                if (!isEdicao && prefillCliente) {
+                    if (/id cliente/i.test(col) && prefillCliente.idCliente) valorInicial = prefillCliente.idCliente;
+                    if (/cliente|razão|razao|empresa/i.test(col) && !/id/i.test(col) && prefillCliente.nomeCliente) valorInicial = prefillCliente.nomeCliente;
+                }
+
+                // Sugestão automática de ID se for novo registro na coluna de ID
+                if (!isEdicao && idx === 0 && !valorInicial && (/id|código|codigo|cotação|nf/i.test(col))) {
+                    const prefixo = state.abaAtiva.substring(0, 3).toUpperCase();
+                    const proximoNum = String(abaObj.linhas.length + 1).padStart(3, '0');
+                    valorInicial = `${prefixo}-${proximoNum}`;
+                }
+
+                return `
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-aco mb-1">${escapeHtml(col)}</label>
+                        <input 
+                            type="text" 
+                            data-coluna="${escapeHtml(col)}"
+                            value="${escapeHtml(valorInicial)}"
+                            placeholder="Digite ${escapeHtml(col)}..."
+                            class="input-campo-registro w-full px-3.5 py-2.5 rounded-xl bg-white border border-aco/25 text-sm text-aco focus:outline-none focus:border-petroleo"
+                        >
+                    </div>
+                `;
+            }).join('');
+
+            const modal = document.getElementById('modal-registro');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function aplicarClienteCorrelacionado(indexCliente) {
+            if (indexCliente === "") return;
+            const clientes = obterListaClientesUnicos();
+            const cli = clientes[Number(indexCliente)];
+            if (!cli) return;
+
+            const inputs = document.querySelectorAll('.input-campo-registro');
+            inputs.forEach(input => {
+                const col = input.getAttribute('data-coluna').toLowerCase();
+                if (col.includes('id cliente') || col === 'id') {
+                    input.value = cli.id || '';
+                } else if (col.includes('cliente') || col.includes('razão') || col.includes('razao') || col.includes('empresa')) {
+                    input.value = cli.nome || '';
+                } else if (col.includes('cnpj') || col.includes('cpf')) {
+                    input.value = cli.cnpj || '';
+                }
+            });
+        }
+
+        function fecharModalRegistro() {
+            const modal = document.getElementById('modal-registro');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            state.editandoIndex = null;
+        }
+
+        async function salvarRegistro(event) {
+            event.preventDefault();
+            const abaObj = state.dados[state.abaAtiva];
+            if (!abaObj) return;
+
+            const novoObj = {};
+            const inputs = document.querySelectorAll('.input-campo-registro');
+            inputs.forEach(input => {
+                const col = input.getAttribute('data-coluna');
+                novoObj[col] = input.value.trim();
+            });
+
+            const isEdicao = state.editandoIndex !== null;
+            const rowIndexAlvo = state.editandoIndex;
+
+            if (isEdicao) {
+                abaObj.linhas[rowIndexAlvo] = novoObj;
+            } else {
+                abaObj.linhas.push(novoObj);
+            }
+
+            salvarCacheLocal();
+            renderizarTudo();
+            fecharModalRegistro();
+
+            mostrarToast(isEdicao ? "Registro atualizado com sucesso!" : "Novo registro adicionado com sucesso!", "success");
+
+            // Envia para o Webhook do Google Apps Script se estiver configurado
+            await enviarParaGoogleAppsScript({
+                acao: isEdicao ? 'editar' : 'adicionar',
+                aba: state.abaAtiva,
+                colunas: abaObj.colunas,
+                registro: novoObj,
+                rowIndex: isEdicao ? rowIndexAlvo : abaObj.linhas.length - 1
+            });
+        }
+
+        function abrirModalExcluir(rowIndex) {
+            state.excluindoIndex = rowIndex;
+            const abaObj = state.dados[state.abaAtiva];
+            const linha = abaObj?.linhas[rowIndex];
+            const resumo = linha ? Object.values(linha).slice(0, 3).filter(Boolean).join(' • ') : '';
+
+            document.getElementById('texto-confirmar-exclusao').innerHTML = `
+                Tem certeza que deseja excluir esta linha da aba <strong>${escapeHtml(state.abaAtiva)}</strong>?<br>
+                <span class="text-xs text-petroleo font-semibold mt-1 block">${escapeHtml(resumo)}</span>
+            `;
+
+            const modal = document.getElementById('modal-excluir');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function fecharModalExcluir() {
+            const modal = document.getElementById('modal-excluir');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            state.excluindoIndex = null;
+        }
+
+        async function confirmarExclusao() {
+            const idx = state.excluindoIndex;
+            const abaObj = state.dados[state.abaAtiva];
+            if (idx === null || !abaObj) return;
+
+            abaObj.linhas.splice(idx, 1);
+            salvarCacheLocal();
+            renderizarTudo();
+            fecharModalExcluir();
+
+            mostrarToast("Linha excluída da base de dados.", "info");
+
+            await enviarParaGoogleAppsScript({
+                acao: 'excluir',
+                aba: state.abaAtiva,
+                rowIndex: idx
+            });
+        }
+
+        async function enviarParaGoogleAppsScript(payload) {
+            if (!state.webhookUrl) return;
+            try {
+                await fetch(state.webhookUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                mostrarToast("Alteração enviada para a Planilha Google (Apps Script).", "success");
+            } catch (e) {
+                console.error("Erro ao enviar para Apps Script:", e);
+                mostrarToast("Salvo localmente, mas houve falha ao enviar ao Apps Script.", "warning");
+            }
+        }
+
+        // =========================================================================
+        // 6. CONFIGURAÇÕES, EXPORTAÇÃO E UTILITÁRIOS
+        // =========================================================================
+        function abrirModalConfig() {
+            document.getElementById('input-sheet-url').value = state.sheetUrl;
+            document.getElementById('input-webhook-url').value = state.webhookUrl;
+            const modal = document.getElementById('modal-config');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function fecharModalConfig() {
+            const modal = document.getElementById('modal-config');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        async function salvarConfiguracoes(event) {
+            event.preventDefault();
+            state.sheetUrl = document.getElementById('input-sheet-url').value.trim() || DEFAULT_SHEET_URL;
+            state.webhookUrl = document.getElementById('input-webhook-url').value.trim();
+
+            try {
+                localStorage.setItem(STORAGE_CONFIG_KEY, JSON.stringify({
+                    sheetUrl: state.sheetUrl,
+                    webhookUrl: state.webhookUrl
+                }));
+            } catch (e) {}
+
+            document.getElementById('link-planilha-externa').href = state.sheetUrl;
+            fecharModalConfig();
+            await sincronizarPlanilhaGoogle(true);
+        }
+
+        async function resetarParaPlanilhaOriginal() {
+            localStorage.removeItem(STORAGE_DATA_KEY);
+            state.abas = [];
+            state.dados = {};
+            await sincronizarPlanilhaGoogle(true);
+        }
+
+        function exportarCSVAtivo() {
+            const abaObj = state.dados[state.abaAtiva];
+            if (!abaObj) return;
+
+            const linhasCSV = [];
+            linhasCSV.push(abaObj.colunas.map(c => `"${String(c).replace(/"/g, '""')}"`).join(';'));
+
+            abaObj.linhas.forEach(linha => {
+                const row = abaObj.colunas.map(c => `"${String(linha[c] || '').replace(/"/g, '""')}"`);
+                linhasCSV.push(row.join(';'));
+            });
+
+            const blob = new Blob(["\uFEFF" + linhasCSV.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `BEMHES_2027_${state.abaAtiva.replace(/\s+/g, '_')}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            mostrarToast(`Arquivo CSV da aba "${state.abaAtiva}" exportado!`, "success");
+        }
+
+        function copiarCodigoAppsScript() {
+            const textarea = document.getElementById('codigo-apps-script');
+            textarea.select();
+            document.execCommand('copy');
+            mostrarToast("Código Google Apps Script copiado para a área de transferência!", "success");
+        }
+
+        function mostrarToast(mensagem, tipo = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            const estilos = {
+                success: "bg-aco border-l-4 border-emerald-400 text-white",
+                warning: "bg-aco border-l-4 border-ambar text-white",
+                info: "bg-petroleo border-l-4 border-trator text-white"
+            };
+
+            toast.className = `${estilos[tipo] || estilos.info} px-4 py-3 rounded-xl shadow-xl text-xs sm:text-sm font-medium flex items-center justify-between gap-3 pointer-events-auto animate-modal`;
+            toast.innerHTML = `
+                <span>${escapeHtml(mensagem)}</span>
+                <button type="button" onclick="this.parentElement.remove()" class="text-white/70 hover:text-white">✕</button>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                if (toast.parentElement) toast.remove();
+            }, 4500);
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
