@@ -583,21 +583,48 @@ index
                         </button>
                     </div>
                     <pre id="codigo-apps-script" class="text-[11px] font-mono text-creme/85 overflow-x-auto custom-scrollbar max-h-36 leading-relaxed">function doPost(e) {
-  var req = JSON.parse(e.postData.contents);
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(req.aba);
-  if (!sheet) return ContentService.createTextOutput(JSON.stringify({ok:false, erro:'Aba não encontrada'})).setMimeType(ContentService.MimeType.JSON);
-  
-  if (req.acao === 'adicionar') {
-    sheet.appendRow(req.valores);
-  } else if (req.acao === 'editar') {
-    var rowIdx = parseInt(req.rowIndex) + 2;
-    sheet.getRange(rowIdx, 1, 1, req.valores.length).setValues([req.valores]);
-  } else if (req.acao === 'excluir') {
-    var delIdx = parseInt(req.rowIndex) + 2;
-    sheet.deleteRow(delIdx);
+  function doPost(e) {
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    if (!e || !e.postData || !e.postData.contents) throw new Error('Requisição vazia.');
+    var req = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName(String(req.aba || ''));
+    if (!sheet) throw new Error('Aba não encontrada: ' + req.aba);
+    var acao = String(req.acao || '');
+    var lastRow = sheet.getLastRow();
+    if (acao === 'adicionar') {
+      if (!Array.isArray(req.valores) || !req.valores.length) throw new Error('Valores inválidos.');
+      sheet.appendRow(req.valores);
+    } else if (acao === 'editar' || acao === 'excluir') {
+      var idx = Number(req.rowIndex);
+      if (!Number.isInteger(idx) || idx < 0) throw new Error('Índice inválido.');
+      var row = idx + 2; // linha 1 = cabeçalho; índice recebido começa em zero
+      if (row > lastRow) throw new Error('Registro não encontrado. Atualize a página e tente novamente.');
+      if (acao === 'editar') {
+        if (!Array.isArray(req.valores) || !req.valores.length) throw new Error('Valores inválidos.');
+        sheet.getRange(row, 1, 1, req.valores.length).setValues([req.valores]);
+      } else {
+        sheet.deleteRow(row);
+      }
+    } else {
+      throw new Error('Ação não reconhecida.');
+    }
+    return resposta({ ok: true, acao: acao, aba: req.aba });
+  } catch (err) {
+    return resposta({ ok: false, erro: String(err.message || err) });
+  } finally {
+    try { lock.releaseLock(); } catch (e2) {}
   }
-  return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
+}
+function doGet() {
+  return resposta({ ok: true, servico: 'BEMHES 2027 Apps Script', status: 'online' });
+}
+function resposta(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
 }</pre>
                 </div>
 
@@ -1372,7 +1399,7 @@ index
                     rowIndex: rowIndex,
                     valores: valoresArray
                 });
-                mostrarToast('Registro atualizado com sucesso!', 'success');
+                mostrarToast('Registro atualizado no portal. A gravação remota deve ser conferida na planilha.', 'warning');
             } else {
                 aba.linhas.push(novoObjeto);
                 await enviarParaAppsScript({
@@ -1380,7 +1407,7 @@ index
                     aba: aba.nome,
                     valores: valoresArray
                 });
-                mostrarToast('Novo registro adicionado com sucesso!', 'success');
+                mostrarToast('Registro adicionado ao portal. A gravação remota deve ser conferida na planilha.', 'warning');
             }
 
             persistirEstadoLocal();
@@ -1426,24 +1453,32 @@ index
                 });
                 persistirEstadoLocal();
                 renderizarTudo();
-                mostrarToast('Linha excluída com sucesso.', 'success');
+                mostrarToast('Registro removido do portal. Confira a planilha para confirmar a exclusão.', 'warning');
             }
 
             fecharModalExcluir();
         }
 
         async function enviarParaAppsScript(payload) {
-            if (!state.webhookUrl) return;
+            if (!state.webhookUrl) {
+                mostrarToast('Alteração mantida somente neste navegador. Configure o Web App para gravar na planilha.', 'warning');
+                return false;
+            }
             try {
+                // Apps Script redireciona respostas e não permite leitura confiável via CORS.
+                // no-cors confirma apenas que o navegador despachou a requisição, não que a planilha gravou.
                 await fetch(state.webhookUrl, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
+                mostrarToast('Solicitação enviada ao Apps Script. Confira a planilha para confirmar a gravação.', 'warning');
+                return true;
             } catch (e) {
-                console.warn('Erro ao enviar alteração para o Google Apps Script:', e);
-                mostrarToast('Salvo localmente. Verifique a URL do Apps Script para gravação remota.', 'warning');
+                console.error('Falha ao enviar ao Apps Script:', e);
+                mostrarToast('Falha ao enviar. A alteração ficou apenas no cache deste navegador.', 'error');
+                return false;
             }
         }
 
@@ -1517,14 +1552,13 @@ index
                 linhasCsv.push(vals.join(';'));
             });
 
-            const blob = new Blob(['﻿' + linhasCsv.join('
-')], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob(['\uFEFF' + linhasCsv.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `BEMHES_2027_${aba.nome.replace(/\s+/g, '_')}.csv`;
             a.click();
-            URL.revokeObjectURL(url);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
         }
 
         function atualizarStatusConexao(texto, cor) {
