@@ -5,13 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BEMHES 2027 — Portal de Gestão e Operações</title>
     
-    <!-- Tailwind CSS --><!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BEMHES 2027 — Portal de Gestão e Operações</title>
-    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -162,6 +155,7 @@
   <div class="bg-white rounded-2xl border border-aco/15 shadow-sm overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full text-sm"><thead id="tableHead" class="bg-petroleo text-white"></thead><tbody id="tableBody"></tbody></table></div><div id="empty" class="hidden p-8 text-center text-aco/60">Nenhum registro encontrado nesta aba.</div></div>
   <p class="mt-4 text-xs text-aco/60">Use o botão <strong>Ver</strong> no início de cada linha para abrir todos os campos do registro. As alterações são gravadas na planilha Google.</p>
 </main>
+<div id="detailModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-aco/75 backdrop-blur-sm p-4"><div class="bg-creme border-2 border-aco rounded-2xl max-w-3xl w-full p-5 sm:p-7 shadow-2xl max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center border-b border-aco/15 pb-3 mb-4"><h3 class="font-display text-xl font-bold uppercase text-aco">Dados completos do registro</h3><button type="button" id="closeDetail" class="p-2 rounded hover:bg-aco/10" aria-label="Fechar"><i data-lucide="x"></i></button></div><div id="detailContent" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div><div class="flex justify-end pt-4"><button type="button" id="closeDetailBtn" class="px-4 py-2 rounded-lg bg-petroleo text-white font-bold">Fechar</button></div></div></div>
 <div id="recordModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/75 backdrop-blur-sm p-4"><div class="bg-creme border-2 border-aco rounded-2xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center border-b border-aco/15 pb-3 mb-4"><h3 id="modalTitle" class="font-display text-xl font-bold uppercase text-aco">Registro</h3><button id="closeModal" class="p-2 rounded hover:bg-aco/10"><i data-lucide="x"></i></button></div><form id="recordForm" class="space-y-3"><div id="fields" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div><div class="flex justify-end gap-2 pt-4"><button type="button" id="cancelForm" class="px-4 py-2 rounded-lg text-sm font-semibold">Cancelar</button><button type="submit" class="px-5 py-2 rounded-lg bg-trator text-white font-bold">Salvar na planilha</button></div></form></div></div>
 <footer class="bg-aco text-creme border-t-4 border-trator mt-auto">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
@@ -208,7 +202,7 @@
    Esta versão usa JSONP/GET para evitar bloqueios CORS do navegador.
    ============================================================ */
 const API_URL = 'https://script.google.com/macros/s/AKfycbwWt3UIeksgMAy3X1w28HzlqhIKeFvNaISUrzPtafDJncKxXN6UQhY8VwS7WIFpyOscUg/exec';
-const API_TOKEN = 'https://docs.google.com/spreadsheets/d/18YYoZGu9HfSbtcn-oxGFyEIhpGzyr5VPh9IKi17BHV0/edit?usp=sharing';
+const API_TOKEN = 'BEMHES_PORTAL_2027_TROQUE_TOKEN';
 
 let sheetNames = [], rows = [], headers = [], editing = null;
 let requestCounter = 0;
@@ -410,217 +404,6 @@ document.addEventListener('DOMContentLoaded', () => {
   $('data-atual').textContent = dateText.charAt(0).toUpperCase() + dateText.slice(1);
   loadSheets();
 });
-</script>
-</body>
-</html>
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Fontes Google: Oswald (Títulos Industriais) e Inter (Textos e Interface) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
-    
-    <!-- Ícones Lucide -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- Configuração de Cores e Fontes Customizadas no Tailwind -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        creme: '#F7F3EA',        /* Fundo exato da borda da logo */
-                        cremeEscuro: '#ECE5D5',  /* Tom secundário de superfície */
-                        trator: '#D9531E',       /* Laranja vibrante do trator */
-                        tratorHover: '#B84214',  /* Laranja escuro para hover */
-                        petroleo: '#1E4863',     /* Azul do macacão e tipografia */
-                        petroleoHover: '#153448',/* Azul escuro para hover */
-                        aco: '#1C2226',          /* Cinza aço escuro das engrenagens */
-                        ambar: '#E08E2B',        /* Dourado/âmbar da graxa e engrenagens */
-                    },
-                    fontFamily: {
-                        display: ['Oswald', 'sans-serif'],
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        /* Padrão sutil de textura industrial no fundo creme */
-        body {
-            background-color: #F7F3EA;
-            background-image: radial-gradient(#d8cfbc 1px, transparent 1px);
-            background-size: 24px 24px;
-            color: #1C2226;
-        }
-
-        /* Estilo de borda chanfrada/robusta para os cards */
-        .card-industrial {
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            border-bottom-width: 6px;
-        }
-
-        .card-industrial:hover {
-            transform: translateY(-4px);
-        }
-
-        .card-industrial:active {
-            transform: translateY(1px);
-            border-bottom-width: 2px;
-        }
-
-        /* Animação suave de rotação da engrenagem no hover */
-        .group:hover .gear-spin {
-            transform: rotate(90deg);
-        }
-        .gear-spin {
-            transition: transform 0.5s ease-in-out;
-        }
-    </style>
-
-    <!-- Metatags para WhatsApp e Redes Sociais (Open Graph) -->
-<meta property="og:title" content="BEMHES 2027 - Lubrificantes e Soluções Industriais">
-<meta property="og:description" content="Portal de atendimento, cotações, faturamento e gestão comercial.">
-<meta property="og:image" content="https://bemhesrepresentacao.github.io/Bemhes-2027/MARCAO%20DA%20GRAXA.jpg">
-<meta property="og:url" content="https://bemhesrepresentacao.github.io/Bemhes-2027/">
-<meta property="og:type" content="website">
-    
-</head>
-<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-trator selection:text-white">
-
-    <!-- ===================================================================== -->
-    <!-- 1. CABEÇALHO (HEADER)                                                 -->
-    <!-- ===================================================================== -->
-    <header class="w-full bg-aco text-white shadow-lg border-b-4 border-trator">
-        <!-- Faixa Institucional Superior -->
-        <div class="bg-petroleo/90 border-b border-white/10">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 py-2 flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm text-creme/90 gap-2">
-                <div class="flex items-center gap-2 font-medium">
-                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-ambar animate-pulse"></span>
-                    <span>BEMHES 2027 — Soluções em Lubrificação Industrial, Agrícola e Automotiva</span>
-                </div>
-                <div class="flex items-center gap-4 text-creme/80">
-                    <span id="data-atual" class="hidden md:inline"></span>
-                    <span class="px-2 py-0.5 rounded bg-aco/60 text-ambar font-semibold text-xs border border-ambar/30">
-                        Sistema Operacional
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Área Principal do Cabeçalho com a Logo Intacta -->
-        <div class="bg-creme text-aco py-6 sm:py-8 px-4 sm:px-6 border-b border-aco/15">
-            <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-                
-                <!-- LOGO ORIGINAL MANTIDA 100% SEM ALTERAÇÃO -->
-<div class="flex-shrink-0 flex justify-center">
-
-    <div class="rounded-2xl overflow-hidden shadow-md border-2 border-aco/15 bg-[#F7F3EA] p-1">
-
-        <!-- TAMANHO DA LOGO: ALTERE AQUI -->
-        <img 
-            src="MARCAO DA GRAXA.jpg" 
-            alt="Logo Oficial Marcão da Graxa" 
-            style="width: 100px; height: auto;"
-            class="object-contain block rounded-xl"
-            onerror="this.onerror=null; this.src='https://placehold.co/400x400/F7F3EA/1C2226?text=MARCÃO+DA+GRAXA.jpg';"
-        >
-
-    </div>
-</div>
-
-                <!-- Título e Apresentação do Portal -->
-                <div class="text-center md:text-left flex-1 md:pl-6">
-                    <h4 class="font-display text-3xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-aco leading-none mb-3">
-                        BEMHES <span class="text-trator">2027</span>
-                    </h4>
-                    <p class="text-aco/80 text-base sm:text-lg max-w-2xl leading-relaxed">
-                        Lubrificantes e Manutenção Especializada — Linha Pesada, Agrícola e Industrial.
-                    </p>
-                </div>
-
-            </div>
-        </div>
-    </header>
-
-    <!-- ===================================================================== -->
-    <!-- 2. SEÇÃO PRINCIPAL DE ACESSO RÁPIDO (GRID DE 4 BOTÕES)                -->
-    <!-- ===================================================================== -->
-    <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12">
-  <section class="mb-8 border-b-2 border-aco/10 pb-5 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-    <div><h2 class="font-display text-2xl sm:text-3xl font-bold uppercase text-petroleo tracking-wide flex items-center gap-2.5"><span class="w-3 h-8 bg-trator rounded-sm"></span>Gestão de Dados</h2><p class="text-sm text-aco/70 mt-2">Consulte, cadastre, edite e exclua registros diretamente na planilha Google.</p></div>
-    <div class="flex gap-2 flex-wrap"><button id="btnRefresh" class="px-4 py-2 rounded-lg bg-petroleo text-white text-sm font-bold hover:bg-petroleoHover"><i data-lucide="refresh-cw" class="inline w-4 h-4 mr-1"></i>Atualizar</button><button id="btnNew" class="px-4 py-2 rounded-lg bg-trator text-white text-sm font-bold hover:bg-tratorHover"><i data-lucide="plus" class="inline w-4 h-4 mr-1"></i>Novo Registro</button></div>
-  </section>
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-    <div class="bg-white rounded-xl border border-aco/10 shadow-sm p-4"><div class="text-xs uppercase font-bold text-aco/60">Planilha conectada</div><div class="font-semibold text-petroleo mt-1">Google Sheets</div><a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/18YYoZGu9HfSbtcn-oxGFyEIhpGzyr5VPh9IKi17BHV0/edit" class="text-xs text-trator underline mt-1 inline-block">Abrir planilha</a></div>
-    <div class="bg-white rounded-xl border border-aco/10 shadow-sm p-4"><label for="sheetSelect" class="text-xs uppercase font-bold text-aco/60">Aba da planilha</label><select id="sheetSelect" class="mt-1 w-full border rounded-lg px-3 py-2 text-sm bg-white"></select></div>
-    <div class="bg-white rounded-xl border border-aco/10 shadow-sm p-4"><label for="searchInput" class="text-xs uppercase font-bold text-aco/60">Pesquisar registros</label><input id="searchInput" type="search" placeholder="Digite para filtrar..." class="mt-1 w-full border rounded-lg px-3 py-2 text-sm"></div>
-  </div>
-  <div id="status" class="hidden mb-4 rounded-xl px-4 py-3 text-sm"></div>
-  <div class="bg-white rounded-2xl border border-aco/15 shadow-sm overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full text-sm"><thead id="tableHead" class="bg-petroleo text-white"></thead><tbody id="tableBody"></tbody></table></div><div id="empty" class="hidden p-8 text-center text-aco/60">Nenhum registro encontrado nesta aba.</div></div>
-  <p class="mt-4 text-xs text-aco/60">As alterações são enviadas ao Google Sheets por um Apps Script. Configure o endpoint e o token no arquivo JavaScript abaixo antes da publicação.</p>
-</main>
-<div id="recordModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-aco/75 backdrop-blur-sm p-4"><div class="bg-creme border-2 border-aco rounded-2xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center border-b border-aco/15 pb-3 mb-4"><h3 id="modalTitle" class="font-display text-xl font-bold uppercase text-aco">Registro</h3><button id="closeModal" class="p-2 rounded hover:bg-aco/10"><i data-lucide="x"></i></button></div><form id="recordForm" class="space-y-3"><div id="fields" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div><div class="flex justify-end gap-2 pt-4"><button type="button" id="cancelForm" class="px-4 py-2 rounded-lg text-sm font-semibold">Cancelar</button><button type="submit" class="px-5 py-2 rounded-lg bg-trator text-white font-bold">Salvar na planilha</button></div></form></div></div>
-<div id="detailModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-aco/75 backdrop-blur-sm p-4"><div class="bg-creme border-2 border-aco rounded-2xl max-w-3xl w-full p-5 sm:p-7 shadow-2xl max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center border-b border-aco/15 pb-3 mb-4"><div><h3 class="font-display text-xl font-bold uppercase text-aco">Visualização completa do registro</h3><p class="text-xs text-aco/60 mt-1">Todos os campos desta linha da planilha</p></div><button id="closeDetail" class="p-2 rounded hover:bg-aco/10" aria-label="Fechar"><i data-lucide="x"></i></button></div><div id="detailContent" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div><div class="flex justify-end mt-5"><button id="closeDetailBtn" class="px-4 py-2 rounded-lg bg-petroleo text-white font-semibold">Fechar</button></div></div></div>
-<footer class="bg-aco text-creme border-t-4 border-trator mt-auto">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-                
-                <!-- Identificação da Empresa -->
-                <div class="text-center md:text-left">
-                    <div class="flex items-center justify-center md:justify-start gap-2 mb-1">
-                        <span class="w-3 h-3 rounded-sm bg-trator inline-block"></span>
-                        <span class="font-display text-xl font-bold uppercase tracking-wider text-white">
-                            BEMHES 2027
-                        </span>
-                    </div>
-                    <p class="text-sm text-creme/75">
-                        Lubrificantes e Manutenção Especializada — Linha Pesada, Agrícola e Industrial.
-                    </p>
-                </div>
-
-                <!-- Contatos Institucionais -->
-                <div class="flex flex-wrap justify-center md:justify-end gap-4 sm:gap-6 text-sm text-creme/80">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="phone" class="w-4 h-4 text-trator"></i>
-                        <span>Atendimento Técnico & Comercial</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-ambar"></i>
-                        <span>Qualidade Garantida</span>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Linha Inferior de Direitos Autorais -->
-            <div class="mt-6 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-creme/60 gap-2">
-                <p>&copy; <span id="ano-atual">2026</span> BEMHES 2027. Todos os direitos reservados.</p>
-                <p>Portal Administrativo v1.0</p>
-            </div>
-        </div>
-    </footer>
-<script>
-// CONFIGURE ESTES DOIS VALORES ANTES DE PUBLICAR:
-const API_URL = 'https://script.google.com/macros/s/AKfycbwWt3UIeksgMAy3X1w28HzlqhIKeFvNaISUrzPtafDJncKxXN6UQhY8VwS7WIFpyOscUg/exec';
-const API_TOKEN = 'https://docs.google.com/spreadsheets/d/18YYoZGu9HfSbtcn-oxGFyEIhpGzyr5VPh9IKi17BHV0/edit?usp=sharing';
-let sheetNames=[], rows=[], headers=[], editing=null;
-const $=id=>document.getElementById(id);
-function status(msg,ok=true){const e=$('status');e.textContent=msg;e.className='mb-4 rounded-xl px-4 py-3 text-sm '+(ok?'bg-green-100 text-green-800':'bg-red-100 text-red-800');e.classList.remove('hidden')}
-async function callApi(action, payload={}){if(!API_URL.startsWith('https://script.google.com'))throw new Error('Ainda falta configurar API_URL: cole a URL da implantação do Apps Script terminada em /exec no index.html.');if(API_TOKEN==='BEMHES_PORTAL_2027_TROQUE_TOKEN')throw new Error('Token padrão ativo. Troque o token no index.html e no Code.gs pelo mesmo valor antes de usar.');const url=API_URL+'?action='+encodeURIComponent(action)+'&token='+encodeURIComponent(API_TOKEN)+(payload.sheet?'&sheet='+encodeURIComponent(payload.sheet):'');if(action==='list'||action==='sheets'){const r=await fetch(url);const j=await r.json();if(!j.ok)throw Error(j.error||'Erro da API');return j}const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,token:API_TOKEN,...payload})});const j=await r.json();if(!j.ok)throw Error(j.error||'Erro da API');return j}
-async function loadSheets(){try{const j=await callApi('sheets');sheetNames=j.sheets||[];$('sheetSelect').innerHTML=sheetNames.map(n=>`<option>${esc(n)}</option>`).join('');if(sheetNames.length)await loadRows()}catch(e){status(e.message,false)}}
-async function loadRows(){try{const sheet=$('sheetSelect').value;if(!sheet)return;const j=await callApi('list',{sheet});headers=j.headers||[];rows=j.rows||[];render();status(`${rows.length} registro(s) carregado(s) da aba ${sheet}.`)}catch(e){status(e.message,false)}}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function render(){const filter=$('searchInput').value.toLowerCase();const view=rows.filter(r=>Object.values(r).join(' ').toLowerCase().includes(filter));$('tableHead').innerHTML='<tr>'+headers.map(h=>`<th class="text-left p-3 whitespace-nowrap">${esc(h)}</th>`).join('')+'<th class="p-3 text-right whitespace-nowrap">Ações</th></tr>';$('tableBody').innerHTML=view.map(r=>`<tr class="border-b border-aco/10 hover:bg-creme/60">${headers.map(h=>`<td class="p-3 align-top max-w-[220px] truncate" title="${esc(r[h])}">${esc(r[h])}</td>`).join('')}<td class="p-3 text-right whitespace-nowrap"><button class="text-emerald-700 font-semibold mr-2" data-view="${esc(r.__row)}">Visualizar</button><button class="text-petroleo font-semibold mr-2" data-edit="${esc(r.__row)}">Editar</button><button class="text-red-600 font-semibold" data-del="${esc(r.__row)}">Excluir</button></td></tr>`).join('');$('empty').classList.toggle('hidden',view.length>0);$('tableBody').querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>showDetails(+b.dataset.view));$('tableBody').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openForm(+b.dataset.edit));$('tableBody').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delRow(+b.dataset.del))}
-function showDetails(rowNum){const item=rows.find(r=>+r.__row===rowNum);if(!item)return;$('detailContent').innerHTML=headers.map(h=>`<div class="rounded-xl bg-white border border-aco/10 p-3"><div class="text-[11px] uppercase font-bold tracking-wide text-petroleo/70 mb-1">${esc(h)}</div><div class="text-sm text-aco whitespace-pre-wrap break-words">${esc(item[h]??'')}</div></div>`).join('');$('detailModal').classList.remove('hidden');$('detailModal').classList.add('flex')}
-function closeDetails(){$('detailModal').classList.add('hidden');$('detailModal').classList.remove('flex')}
-function openForm(rowNum=null){editing=rowNum;const item=rowNum===null?{}:rows.find(r=>+r.__row===rowNum)||{};$('modalTitle').textContent=rowNum===null?'Novo registro':'Editar registro';$('fields').innerHTML=headers.map((h,i)=>`<label class="block text-xs font-bold text-aco">${esc(h)}<input name="f${i}" value="${esc(item[h]||'')}" class="mt-1 w-full rounded-lg border border-aco/20 bg-white px-3 py-2 text-sm font-normal" /></label>`).join('');$('recordModal').classList.remove('hidden');$('recordModal').classList.add('flex')}
-function closeForm(){$('recordModal').classList.add('hidden');$('recordModal').classList.remove('flex')}
-async function delRow(row){if(!confirm('Excluir este registro da planilha?'))return;try{await callApi('delete',{sheet:$('sheetSelect').value,row});await loadRows()}catch(e){status(e.message,false)}}
-$('recordForm').onsubmit=async e=>{e.preventDefault();const record={};headers.forEach((h,i)=>record[h]=$('recordForm').elements['f'+i].value);try{await callApi(editing===null?'add':'update',{sheet:$('sheetSelect').value,row:editing,record});closeForm();await loadRows()}catch(e){status(e.message,false)}};
-$('btnNew').onclick=()=>openForm();$('btnRefresh').onclick=loadRows;$('sheetSelect').onchange=loadRows;$('searchInput').oninput=render;$('closeModal').onclick=closeForm;$('cancelForm').onclick=closeForm;$('closeDetail').onclick=closeDetails;$('closeDetailBtn').onclick=closeDetails;document.addEventListener('DOMContentLoaded',()=>{lucide.createIcons();$('ano-atual').textContent=new Date().getFullYear();const d=new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});$('data-atual').textContent=d.charAt(0).toUpperCase()+d.slice(1);loadSheets()});
 </script>
 </body>
 </html>
